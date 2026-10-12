@@ -22,3 +22,10 @@
 
 # Generated at build time by makepri (see support/scripts/compile_windows_msix_helper.ps1)
 /support/build/msix/content/resources.pri
+
+# Apple & Swift Package Manager build artifacts
+apple/.build/
+apple/.swiftpm/
+xcuserdata/
+*.xcworkspace/xcuserdata/
+

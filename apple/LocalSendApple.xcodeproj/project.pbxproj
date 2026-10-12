@@ -1,0 +1,576 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0339CFDB4AA87B5785545395 /* IOSHistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5104D3CB06E798BD2A22F405 /* IOSHistoryView.swift */; };
+		07A2AEAD63C7B29C3D6DDFE7 /* IOSReceiveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A4AAC661EA2FA63A03E1C75 /* IOSReceiveView.swift */; };
+		08E588C312431CC37CC105E4 /* MacReceiveModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74E8377BEB6AD3896EFAA034 /* MacReceiveModal.swift */; };
+		0A6433E6F75A0E2F5621CAFC /* MacSidebarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C391A6D910409ADDB98DA142 /* MacSidebarView.swift */; };
+		0B03DDF8376328E7D5D703A8 /* MacMainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2AD6B6B3104FF3CB18C7C5A /* MacMainView.swift */; };
+		180B0176499BAECE628FB19E /* LocalSendCore in Frameworks */ = {isa = PBXBuildFile; productRef = 72322B6301CA1C977A6656FE /* LocalSendCore */; };
+		22B7476C9B81F2AF3D82B619 /* IOSSendView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9ED1CF5DD334127D2777F1D /* IOSSendView.swift */; };
+		22C1CE4B448377F9C19AF223 /* AdaptiveRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9900472F8164767F9AD097DD /* AdaptiveRootView.swift */; };
+		2392CE37884AF817DB2FD76D /* MacHistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE48225A608A2CB28206E0B8 /* MacHistoryView.swift */; };
+		3263369EF637CC569FA41E35 /* LocalSendUI in Frameworks */ = {isa = PBXBuildFile; productRef = 6ED11AB87DFCCF845CBACDA5 /* LocalSendUI */; };
+		418DFE86092E5CA933434BEA /* LocalSendMacApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20F7ADB31DBC8F319FD76907 /* LocalSendMacApp.swift */; };
+		6603E322843D17FCF757B622 /* LocalSendIOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 363A9E9541F5611E70CBAF87 /* LocalSendIOSApp.swift */; };
+		75377EEE3EFCC073834B1A43 /* IOSPhoneTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95D82600FF02F5C3480DEEE2 /* IOSPhoneTabView.swift */; };
+		9E181AE0B567B4807917EB73 /* MacReceiveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D4CD265F014E2B7DF4E06A6 /* MacReceiveView.swift */; };
+		A716E01EBF4006324A39B25E /* MacSendView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2235BE1AB168B630D7B75C /* MacSendView.swift */; };
+		C12F84962A054BD1EC081120 /* LocalSendUI in Frameworks */ = {isa = PBXBuildFile; productRef = 26DB6EE57D3247B8AB9F05A0 /* LocalSendUI */; };
+		DE083875C1EEBFC3032512A6 /* IOSSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C5CE5E1BB044DC9D38BF7EF /* IOSSettingsView.swift */; };
+		F196A4C2D5A609E0334CBFA6 /* IOSPadSplitView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FFDC51C5E3C8AF444D1D8A9 /* IOSPadSplitView.swift */; };
+		F237888111210F31E9100CDF /* MacSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 315D18DE376E06DF3AC3D818 /* MacSettingsView.swift */; };
+		FC574BE87D97461B7B8CCE23 /* LocalSendCore in Frameworks */ = {isa = PBXBuildFile; productRef = 12F6CFD324EC617860E3857A /* LocalSendCore */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		20F7ADB31DBC8F319FD76907 /* LocalSendMacApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalSendMacApp.swift; sourceTree = "<group>"; };
+		315D18DE376E06DF3AC3D818 /* MacSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacSettingsView.swift; sourceTree = "<group>"; };
+		363A9E9541F5611E70CBAF87 /* LocalSendIOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalSendIOSApp.swift; sourceTree = "<group>"; };
+		4C5CE5E1BB044DC9D38BF7EF /* IOSSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IOSSettingsView.swift; sourceTree = "<group>"; };
+		5104D3CB06E798BD2A22F405 /* IOSHistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IOSHistoryView.swift; sourceTree = "<group>"; };
+		5D4CD265F014E2B7DF4E06A6 /* MacReceiveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacReceiveView.swift; sourceTree = "<group>"; };
+		6A4AAC661EA2FA63A03E1C75 /* IOSReceiveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IOSReceiveView.swift; sourceTree = "<group>"; };
+		6E2235BE1AB168B630D7B75C /* MacSendView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacSendView.swift; sourceTree = "<group>"; };
+		73B8FA0FAB90718E4248D737 /* LocalSendMac.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = LocalSendMac.entitlements; sourceTree = "<group>"; };
+		74E8377BEB6AD3896EFAA034 /* MacReceiveModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacReceiveModal.swift; sourceTree = "<group>"; };
+		7C08B1E70823BB1F1D899631 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		85FCB6DC5243AE83B507BF3D /* LocalSend-iOS.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = "LocalSend-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		8FFDC51C5E3C8AF444D1D8A9 /* IOSPadSplitView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IOSPadSplitView.swift; sourceTree = "<group>"; };
+		95D82600FF02F5C3480DEEE2 /* IOSPhoneTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IOSPhoneTabView.swift; sourceTree = "<group>"; };
+		9900472F8164767F9AD097DD /* AdaptiveRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdaptiveRootView.swift; sourceTree = "<group>"; };
+		A986BD7227A48AA7C2CA790E /* apple */ = {isa = PBXFileReference; lastKnownFileType = folder; name = apple; path = .; sourceTree = SOURCE_ROOT; };
+		AE48225A608A2CB28206E0B8 /* MacHistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacHistoryView.swift; sourceTree = "<group>"; };
+		C391A6D910409ADDB98DA142 /* MacSidebarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacSidebarView.swift; sourceTree = "<group>"; };
+		D1D785B52BC7379A8F3C467D /* LocalSend-macOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "LocalSend-macOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		E33CD2D86764228FF75976B5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		F2AD6B6B3104FF3CB18C7C5A /* MacMainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacMainView.swift; sourceTree = "<group>"; };
+		F9ED1CF5DD334127D2777F1D /* IOSSendView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IOSSendView.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		90F93AC0AC12DD2A6C383D2B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FC574BE87D97461B7B8CCE23 /* LocalSendCore in Frameworks */,
+				3263369EF637CC569FA41E35 /* LocalSendUI in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E352220158A64D6C31BF6DF5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				180B0176499BAECE628FB19E /* LocalSendCore in Frameworks */,
+				C12F84962A054BD1EC081120 /* LocalSendUI in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		0BB63864CB37D4D5A3DB4115 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				AE48225A608A2CB28206E0B8 /* MacHistoryView.swift */,
+				F2AD6B6B3104FF3CB18C7C5A /* MacMainView.swift */,
+				74E8377BEB6AD3896EFAA034 /* MacReceiveModal.swift */,
+				5D4CD265F014E2B7DF4E06A6 /* MacReceiveView.swift */,
+				6E2235BE1AB168B630D7B75C /* MacSendView.swift */,
+				315D18DE376E06DF3AC3D818 /* MacSettingsView.swift */,
+				C391A6D910409ADDB98DA142 /* MacSidebarView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		1DBEEB6EFF3CCECA5E4B9B3E /* App */ = {
+			isa = PBXGroup;
+			children = (
+				363A9E9541F5611E70CBAF87 /* LocalSendIOSApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		22BDA8B7ACADC2DCEB1C48DC = {
+			isa = PBXGroup;
+			children = (
+				5A5E6B05141085CF05D7CF8D /* Apps */,
+				D283A2FC1F55C6A779E325FD /* Packages */,
+				B125094784CFC3D1B10CBD49 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		405C5B369B3EF6932DD039D4 /* LocalSendMac */ = {
+			isa = PBXGroup;
+			children = (
+				86108E6DBF4BF7E3C1F9165B /* App */,
+				E6456321B0686ED1A76F7E0F /* Resources */,
+				0BB63864CB37D4D5A3DB4115 /* Views */,
+			);
+			path = LocalSendMac;
+			sourceTree = "<group>";
+		};
+		4DFEC06E9C2EE4EC9782AED4 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				E33CD2D86764228FF75976B5 /* Info.plist */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		5A5E6B05141085CF05D7CF8D /* Apps */ = {
+			isa = PBXGroup;
+			children = (
+				D55F8D2518881DCB78ABC52C /* LocalSendIOS */,
+				405C5B369B3EF6932DD039D4 /* LocalSendMac */,
+			);
+			path = Apps;
+			sourceTree = "<group>";
+		};
+		77A687D6B4ED504061977E7A /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				9900472F8164767F9AD097DD /* AdaptiveRootView.swift */,
+				5104D3CB06E798BD2A22F405 /* IOSHistoryView.swift */,
+				8FFDC51C5E3C8AF444D1D8A9 /* IOSPadSplitView.swift */,
+				95D82600FF02F5C3480DEEE2 /* IOSPhoneTabView.swift */,
+				6A4AAC661EA2FA63A03E1C75 /* IOSReceiveView.swift */,
+				F9ED1CF5DD334127D2777F1D /* IOSSendView.swift */,
+				4C5CE5E1BB044DC9D38BF7EF /* IOSSettingsView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		86108E6DBF4BF7E3C1F9165B /* App */ = {
+			isa = PBXGroup;
+			children = (
+				20F7ADB31DBC8F319FD76907 /* LocalSendMacApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		B125094784CFC3D1B10CBD49 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				85FCB6DC5243AE83B507BF3D /* LocalSend-iOS.app */,
+				D1D785B52BC7379A8F3C467D /* LocalSend-macOS.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		D283A2FC1F55C6A779E325FD /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				A986BD7227A48AA7C2CA790E /* apple */,
+			);
+			name = Packages;
+			sourceTree = "<group>";
+		};
+		D55F8D2518881DCB78ABC52C /* LocalSendIOS */ = {
+			isa = PBXGroup;
+			children = (
+				1DBEEB6EFF3CCECA5E4B9B3E /* App */,
+				4DFEC06E9C2EE4EC9782AED4 /* Resources */,
+				77A687D6B4ED504061977E7A /* Views */,
+			);
+			path = LocalSendIOS;
+			sourceTree = "<group>";
+		};
+		E6456321B0686ED1A76F7E0F /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				7C08B1E70823BB1F1D899631 /* Info.plist */,
+				73B8FA0FAB90718E4248D737 /* LocalSendMac.entitlements */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		5CF84809B4C42951F4A4FAF0 /* LocalSend-iOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6692F6EE7AEEB36D24E0C8C5 /* Build configuration list for PBXNativeTarget "LocalSend-iOS" */;
+			buildPhases = (
+				204796AE7048B7DBA34F4670 /* Sources */,
+				E352220158A64D6C31BF6DF5 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "LocalSend-iOS";
+			packageProductDependencies = (
+				72322B6301CA1C977A6656FE /* LocalSendCore */,
+				26DB6EE57D3247B8AB9F05A0 /* LocalSendUI */,
+			);
+			productName = "LocalSend-iOS";
+			productReference = 85FCB6DC5243AE83B507BF3D /* LocalSend-iOS.app */;
+			productType = "com.apple.product-type.application";
+		};
+		DDF1B663D9AEA2A3A2B6878C /* LocalSend-macOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 46FC43212CB13C01E28418D8 /* Build configuration list for PBXNativeTarget "LocalSend-macOS" */;
+			buildPhases = (
+				7F6937B66C8EB1C3EC365912 /* Sources */,
+				90F93AC0AC12DD2A6C383D2B /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "LocalSend-macOS";
+			packageProductDependencies = (
+				12F6CFD324EC617860E3857A /* LocalSendCore */,
+				6ED11AB87DFCCF845CBACDA5 /* LocalSendUI */,
+			);
+			productName = "LocalSend-macOS";
+			productReference = D1D785B52BC7379A8F3C467D /* LocalSend-macOS.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		42EFE7F26D22A87B818E9C05 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					5CF84809B4C42951F4A4FAF0 = {
+						ProvisioningStyle = Automatic;
+					};
+					DDF1B663D9AEA2A3A2B6878C = {
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 6F8A95F6939382FD12180B52 /* Build configuration list for PBXProject "LocalSendApple" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 22BDA8B7ACADC2DCEB1C48DC;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				18D0ADE66EF5B9130E188E5B /* XCLocalSwiftPackageReference "." */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = B125094784CFC3D1B10CBD49 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				DDF1B663D9AEA2A3A2B6878C /* LocalSend-macOS */,
+				5CF84809B4C42951F4A4FAF0 /* LocalSend-iOS */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		204796AE7048B7DBA34F4670 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				22C1CE4B448377F9C19AF223 /* AdaptiveRootView.swift in Sources */,
+				0339CFDB4AA87B5785545395 /* IOSHistoryView.swift in Sources */,
+				F196A4C2D5A609E0334CBFA6 /* IOSPadSplitView.swift in Sources */,
+				75377EEE3EFCC073834B1A43 /* IOSPhoneTabView.swift in Sources */,
+				07A2AEAD63C7B29C3D6DDFE7 /* IOSReceiveView.swift in Sources */,
+				22B7476C9B81F2AF3D82B619 /* IOSSendView.swift in Sources */,
+				DE083875C1EEBFC3032512A6 /* IOSSettingsView.swift in Sources */,
+				6603E322843D17FCF757B622 /* LocalSendIOSApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7F6937B66C8EB1C3EC365912 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				418DFE86092E5CA933434BEA /* LocalSendMacApp.swift in Sources */,
+				2392CE37884AF817DB2FD76D /* MacHistoryView.swift in Sources */,
+				0B03DDF8376328E7D5D703A8 /* MacMainView.swift in Sources */,
+				08E588C312431CC37CC105E4 /* MacReceiveModal.swift in Sources */,
+				9E181AE0B567B4807917EB73 /* MacReceiveView.swift in Sources */,
+				A716E01EBF4006324A39B25E /* MacSendView.swift in Sources */,
+				F237888111210F31E9100CDF /* MacSettingsView.swift in Sources */,
+				0A6433E6F75A0E2F5621CAFC /* MacSidebarView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		0C088D74D36EA1C55B130291 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Apps/LocalSendMac/Resources/LocalSendMac.entitlements;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Apps/LocalSendMac/Resources/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				PRODUCT_BUNDLE_IDENTIFIER = org.localsend.localsendApp.mac;
+				PRODUCT_NAME = LocalSend;
+				SDKROOT = macosx;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		12A79730CB4AD425292A62BF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Apps/LocalSendMac/Resources/LocalSendMac.entitlements;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Apps/LocalSendMac/Resources/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				PRODUCT_BUNDLE_IDENTIFIER = org.localsend.localsendApp.mac;
+				PRODUCT_NAME = LocalSend;
+				SDKROOT = macosx;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		5A00D96D8899F3B8AD112898 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		5D336EC8EA84624B873F0478 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Apps/LocalSendIOS/Resources/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = org.localsend.localsendApp.ios;
+				PRODUCT_NAME = LocalSend;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		65542B77EAF05AB4BD4AF081 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Apps/LocalSendIOS/Resources/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = org.localsend.localsendApp.ios;
+				PRODUCT_NAME = LocalSend;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		DF7DFFEE67968B01F43FA5C3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		46FC43212CB13C01E28418D8 /* Build configuration list for PBXNativeTarget "LocalSend-macOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0C088D74D36EA1C55B130291 /* Debug */,
+				12A79730CB4AD425292A62BF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		6692F6EE7AEEB36D24E0C8C5 /* Build configuration list for PBXNativeTarget "LocalSend-iOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5D336EC8EA84624B873F0478 /* Debug */,
+				65542B77EAF05AB4BD4AF081 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		6F8A95F6939382FD12180B52 /* Build configuration list for PBXProject "LocalSendApple" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DF7DFFEE67968B01F43FA5C3 /* Debug */,
+				5A00D96D8899F3B8AD112898 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		18D0ADE66EF5B9130E188E5B /* XCLocalSwiftPackageReference "." */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = .;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		12F6CFD324EC617860E3857A /* LocalSendCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = LocalSendCore;
+		};
+		26DB6EE57D3247B8AB9F05A0 /* LocalSendUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = LocalSendUI;
+		};
+		6ED11AB87DFCCF845CBACDA5 /* LocalSendUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = LocalSendUI;
+		};
+		72322B6301CA1C977A6656FE /* LocalSendCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = LocalSendCore;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 42EFE7F26D22A87B818E9C05 /* Project object */;
+}

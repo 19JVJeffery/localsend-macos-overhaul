@@ -1,0 +1,61 @@
+name: LocalSendApple
+options:
+  bundleIdPrefix: org.localsend
+  createIntermediateGroups: true
+  xcodeVersion: "15.0"
+
+packages:
+  LocalSendPackage:
+    path: .
+
+targets:
+  LocalSend-macOS:
+    type: application
+    platform: macOS
+    deploymentTarget: "13.0"
+    sources:
+      - path: Apps/LocalSendMac
+    dependencies:
+      - package: LocalSendPackage
+        product: LocalSendCore
+      - package: LocalSendPackage
+        product: LocalSendUI
+    info:
+      path: Apps/LocalSendMac/Resources/Info.plist
+    entitlements:
+      path: Apps/LocalSendMac/Resources/LocalSendMac.entitlements
+    settings:
+      base:
+        PRODUCT_NAME: LocalSend
+        PRODUCT_BUNDLE_IDENTIFIER: org.localsend.localsendApp.mac
+        SWIFT_VERSION: "5.0"
+        GENERATE_INFOPLIST_FILE: NO
+        MACOSX_DEPLOYMENT_TARGET: "13.0"
+        ENABLE_PREVIEWS: YES
+        CODE_SIGN_STYLE: Automatic
+        CODE_SIGN_IDENTITY: "-"
+
+  LocalSend-iOS:
+    type: application
+    platform: iOS
+    deploymentTarget: "16.0"
+    sources:
+      - path: Apps/LocalSendIOS
+    dependencies:
+      - package: LocalSendPackage
+        product: LocalSendCore
+      - package: LocalSendPackage
+        product: LocalSendUI
+    info:
+      path: Apps/LocalSendIOS/Resources/Info.plist
+    settings:
+      base:
+        PRODUCT_NAME: LocalSend
+        PRODUCT_BUNDLE_IDENTIFIER: org.localsend.localsendApp.ios
+        SWIFT_VERSION: "5.0"
+        GENERATE_INFOPLIST_FILE: NO
+        IPHONEOS_DEPLOYMENT_TARGET: "16.0"
+        TARGETED_DEVICE_FAMILY: "1,2"
+        ENABLE_PREVIEWS: YES
+        CODE_SIGN_STYLE: Automatic
+        CODE_SIGN_IDENTITY: "-"
