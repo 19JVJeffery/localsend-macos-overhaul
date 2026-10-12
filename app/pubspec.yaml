@@ -14,6 +14,7 @@ dependencies:
   collection: ^1.17.2 # allow newer versions, so it can compile with newer Flutter versions
   connectivity_plus: 7.3.1
   crypto: 3.0.7
+  cupertino_icons: ^1.0.9
   dart_mappable: 4.8.0
   desktop_drop: 0.7.1
   device_apps: 2.2.0

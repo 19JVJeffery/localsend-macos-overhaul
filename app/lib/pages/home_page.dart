@@ -6,6 +6,7 @@ import 'package:localsend_app/config/init.dart';
 import 'package:localsend_app/config/theme.dart';
 import 'package:localsend_app/gen/strings.g.dart';
 import 'package:localsend_app/pages/home_page_controller.dart';
+import 'package:localsend_app/pages/macos/macos_home_page.dart';
 import 'package:localsend_app/pages/tabs/receive_tab.dart';
 import 'package:localsend_app/pages/tabs/send_tab.dart';
 import 'package:localsend_app/pages/tabs/settings_tab.dart';
@@ -68,6 +69,13 @@ class _HomePageState extends State<HomePage> with Refena {
 
   @override
   Widget build(BuildContext context) {
+    if (Theme.of(context).platform == TargetPlatform.macOS) {
+      return MacosHomePage(
+        initialTab: widget.initialTab,
+        appStart: widget.appStart,
+      );
+    }
+
     Translations.of(context); // rebuild on locale change
     final vm = context.watch(homePageControllerProvider);
 
