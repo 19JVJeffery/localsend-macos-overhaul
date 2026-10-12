@@ -10,6 +10,7 @@ BASEDIR=$(cd "$BASEDIR" ; pwd -P)
 NEW_PATH=`echo $PATH | tr ":" "\n" | grep -v "Contents/Developer/" | tr "\n" ":"`
 
 export PATH=${NEW_PATH%?} # remove trailing :
+export PATH="$HOME/.cargo/bin:$HOME/.local/bin:/opt/homebrew/bin:/usr/local/bin:$PATH"
 
 env
 

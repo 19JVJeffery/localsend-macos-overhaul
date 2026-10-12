@@ -122,6 +122,9 @@ class Rustup {
         : Platform.environment['HOME'];
     final paths = [
       if (home != null) path.join(home, '.cargo', 'bin'),
+      if (home != null) path.join(home, '.local', 'bin'),
+      '/opt/homebrew/bin',
+      '/usr/local/bin',
       if (envPath != null) ...envPath.split(envPathSeparator),
     ];
     for (final p in paths) {
