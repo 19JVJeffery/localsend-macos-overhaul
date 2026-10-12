@@ -9,6 +9,7 @@ public struct WebShareView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var copied = false
     @State private var webPin: String = ""
+    @State private var toast: ToastItem?
 
     public init(engine: LocalSendEngine) {
         self.engine = engine
@@ -158,6 +159,7 @@ public struct WebShareView: View {
                 }
             }
         }
+        .localSendToast($toast)
         #if os(macOS)
         .frame(minWidth: 480, minHeight: 460)
         #endif
@@ -172,6 +174,7 @@ public struct WebShareView: View {
         #endif
         withAnimation(LocalSendMotion.snappy) {
             copied = true
+            toast = ToastItem(title: "Share Link Copied", message: shareURL, systemImage: "link", tint: accentColor)
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
             withAnimation(LocalSendMotion.snappy) {

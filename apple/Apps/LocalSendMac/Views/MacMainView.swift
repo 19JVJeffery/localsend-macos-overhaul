@@ -29,8 +29,7 @@ public struct MacMainView: View {
             )
         } detail: {
             ZStack {
-                LocalSendTheme.windowBackground(for: engine.settings.accentColorPreference, colorScheme: colorScheme)
-                    .ignoresSafeArea()
+                AmbientBackgroundView(accentColor: accentColor)
 
                 switch selectedItem {
                 case .send:

@@ -14,6 +14,7 @@ public struct MacSendView: View {
     @State private var isTextSendPresented = false
     @State private var isTroubleshootPresented = false
     @State private var selectedDevice: Device?
+    @State private var toast: ToastItem?
 
     public init(engine: LocalSendEngine) {
         self.engine = engine
@@ -144,7 +145,12 @@ public struct MacSendView: View {
                         .buttonStyle(.bordered)
                         .controlSize(.small)
 
-                        Button(action: { engine.refreshDiscovery() }) {
+                        Button(action: {
+                            withAnimation(LocalSendMotion.snappy) {
+                                engine.refreshDiscovery()
+                                toast = ToastItem(title: "Scanning Local Subnet", systemImage: "arrow.clockwise", tint: accentColor, duration: 1.5)
+                            }
+                        }) {
                             Image(systemName: "arrow.clockwise")
                                 .font(.body.weight(.semibold))
                         }
@@ -161,6 +167,7 @@ public struct MacSendView: View {
                             Text("Scanning local network for LocalSend devices...")
                                 .font(.subheadline)
                                 .foregroundColor(.secondary)
+                                .shimmering()
 
                             Button(action: { isTroubleshootPresented = true }) {
                                 Label("Troubleshoot Connection", systemImage: "wrench.and.screwdriver")
@@ -199,6 +206,7 @@ public struct MacSendView: View {
             }
             .padding(LocalSendTheme.spacingLarge)
         }
+        .localSendToast($toast)
         .fileImporter(
             isPresented: $isFileImporterPresented,
             allowedContentTypes: [.item],

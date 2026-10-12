@@ -13,6 +13,7 @@ public struct IOSSendView: View {
     @State private var isManualSendPresented = false
     @State private var isTextSendPresented = false
     @State private var isTroubleshootPresented = false
+    @State private var toast: ToastItem?
 
     public init(engine: LocalSendEngine) {
         self.engine = engine
@@ -114,6 +115,7 @@ public struct IOSSendView: View {
                             Button(action: {
                                 withAnimation(LocalSendMotion.snappy) {
                                     engine.refreshDiscovery()
+                                    toast = ToastItem(title: "Scanning Local Subnet", systemImage: "arrow.clockwise", tint: accentColor, duration: 1.5)
                                 }
                             }) {
                                 Image(systemName: "arrow.clockwise")
@@ -130,6 +132,7 @@ public struct IOSSendView: View {
                                 Text("Searching for nearby devices on Wi-Fi...")
                                     .font(.subheadline)
                                     .foregroundColor(.secondary)
+                                    .shimmering()
 
                                 Button(action: { isTroubleshootPresented = true }) {
                                     Label("Troubleshoot Connection", systemImage: "wrench.and.screwdriver")
@@ -160,7 +163,9 @@ public struct IOSSendView: View {
                 }
                 .padding()
             }
+            .background(AmbientBackgroundView(accentColor: accentColor))
             .navigationTitle("Send")
+            .localSendToast($toast)
             .fileImporter(
                 isPresented: $isFileImporterPresented,
                 allowedContentTypes: [.item],

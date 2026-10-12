@@ -8,6 +8,7 @@ public struct DeveloperShowcaseView: View {
     @State private var isScanning = true
     @State private var pillStatus: PillStatus = .transferring(progress: 0.45)
     @State private var showCelebration = false
+    @State private var previewToast: ToastItem? = nil
     @Environment(\.colorScheme) private var colorScheme
 
     public init(engine: LocalSendEngine? = nil) {
@@ -146,9 +147,70 @@ public struct DeveloperShowcaseView: View {
                     }
                 }
                 .localSendCardStyle()
+
+                // 6. Floating Island Toasts & Shimmer Effects (Inspired by SPAlert & SwiftUI-Shimmer)
+                VStack(alignment: .leading, spacing: LocalSendTheme.spacingSmall) {
+                    Text("Floating Island HUD & Shimmer (SPAlert / Shimmer)")
+                        .font(.headline)
+
+                    HStack(spacing: 12) {
+                        Button("Success Toast") {
+                            previewToast = ToastItem(
+                                title: "File Transfer Complete",
+                                message: "3 items saved to Downloads",
+                                systemImage: "checkmark.circle.fill",
+                                tint: LocalSendTheme.success
+                            )
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .tint(LocalSendTheme.success)
+
+                        Button("Copy Link Toast") {
+                            previewToast = ToastItem(
+                                title: "Web Link Copied",
+                                message: "http://192.168.1.45:53317",
+                                systemImage: "link",
+                                tint: LocalSendTheme.accent(for: colorPreference, colorScheme: colorScheme)
+                            )
+                        }
+                        .buttonStyle(.bordered)
+
+                        Button("Warning Toast") {
+                            previewToast = ToastItem(
+                                title: "Peer Disconnected",
+                                message: "Transfer aborted by remote sender",
+                                systemImage: "exclamationmark.triangle.fill",
+                                tint: LocalSendTheme.warning
+                            )
+                        }
+                        .buttonStyle(.bordered)
+                    }
+
+                    Divider()
+
+                    // Shimmer preview
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("Specular Shimmer Effect")
+                            .font(.subheadline.weight(.semibold))
+
+                        HStack {
+                            Text("Searching for nearby LocalSend devices on Wi-Fi...")
+                                .font(.body)
+                                .foregroundColor(.secondary)
+                                .shimmering()
+
+                            Spacer()
+                        }
+                        .padding(LocalSendTheme.spacingSmall)
+                        .background(LocalSendTheme.accentContainer(for: colorPreference, colorScheme: colorScheme))
+                        .clipShape(RoundedRectangle(cornerRadius: LocalSendTheme.cornerRadiusSmall, style: .continuous))
+                    }
+                }
+                .localSendCardStyle()
             }
             .padding(LocalSendTheme.spacingLarge)
         }
+        .localSendToast($previewToast)
     }
 
     private func colorSwatch(_ title: String, color: Color) -> some View {

@@ -10,6 +10,7 @@ public struct MacReceiveView: View {
     @State private var aliasDraft = ""
     @State private var copiedIP: String?
     @State private var isWebSharePresented = false
+    @State private var toast: ToastItem?
 
     public init(engine: LocalSendEngine) {
         self.engine = engine
@@ -249,6 +250,7 @@ public struct MacReceiveView: View {
             }
             .padding(LocalSendTheme.spacingLarge)
         }
+        .localSendToast($toast)
         .sheet(isPresented: $isWebSharePresented) {
             WebShareView(engine: engine)
         }
@@ -265,6 +267,7 @@ public struct MacReceiveView: View {
         if openPanel.runModal() == .OK, let selectedURL = openPanel.url {
             engine.settings.destinationDirectoryPath = selectedURL.path
             engine.settings.save()
+            toast = ToastItem(title: "Destination Folder Updated", message: selectedURL.lastPathComponent, systemImage: "folder.badge.gearshape", tint: accentColor)
         }
     }
 
@@ -273,6 +276,7 @@ public struct MacReceiveView: View {
         NSPasteboard.general.setString(address, forType: .string)
         withAnimation(LocalSendMotion.snappy) {
             copiedIP = address
+            toast = ToastItem(title: "IP Address Copied", message: address, systemImage: "doc.on.doc.fill", tint: accentColor)
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.8) {
             withAnimation(LocalSendMotion.snappy) {

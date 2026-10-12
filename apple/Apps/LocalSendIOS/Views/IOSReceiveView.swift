@@ -7,6 +7,7 @@ public struct IOSReceiveView: View {
     @Environment(\.colorScheme) private var colorScheme
     @State private var copiedIP: String?
     @State private var isWebSharePresented = false
+    @State private var toast: ToastItem?
 
     public init(engine: LocalSendEngine) {
         self.engine = engine
@@ -148,8 +149,10 @@ public struct IOSReceiveView: View {
                 }
                 .padding(LocalSendTheme.spacingMedium)
             }
+            .background(AmbientBackgroundView(accentColor: accentColor))
             .navigationTitle("Receive")
             .tint(accentColor)
+            .localSendToast($toast)
             .sheet(isPresented: $isWebSharePresented) {
                 WebShareView(engine: engine)
             }
@@ -160,6 +163,7 @@ public struct IOSReceiveView: View {
         UIPasteboard.general.string = address
         withAnimation(LocalSendMotion.snappy) {
             copiedIP = address
+            toast = ToastItem(title: "IP Address Copied", message: address, systemImage: "doc.on.doc.fill", tint: accentColor)
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.8) {
             withAnimation(LocalSendMotion.snappy) {
