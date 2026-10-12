@@ -6,6 +6,7 @@ public struct IOSHistoryView: View {
     @ObservedObject var engine: LocalSendEngine
     @Environment(\.colorScheme) private var colorScheme
     @State private var searchText = ""
+    @State private var showingClearAlert = false
 
     public init(engine: LocalSendEngine) {
         self.engine = engine
@@ -69,6 +70,7 @@ public struct IOSHistoryView: View {
                             }
                             .padding(.vertical, 4)
                         }
+                        .onDelete(perform: deleteItems)
                     }
                     .searchable(text: $searchText, prompt: "Search files or devices")
                 }
@@ -78,13 +80,32 @@ public struct IOSHistoryView: View {
             .toolbar {
                 if !engine.transferHistory.isEmpty {
                     ToolbarItem(placement: .topBarTrailing) {
-                        Button("Clear") {
-                            withAnimation(LocalSendMotion.snappy) {
-                                engine.clearHistory()
-                            }
+                        Button(role: .destructive) {
+                            showingClearAlert = true
+                        } label: {
+                            Text("Clear")
                         }
                     }
                 }
+            }
+            .alert("Clear Transfer History?", isPresented: $showingClearAlert) {
+                Button("Cancel", role: .cancel) {}
+                Button("Clear All", role: .destructive) {
+                    withAnimation(LocalSendMotion.snappy) {
+                        engine.clearHistory()
+                    }
+                }
+            } message: {
+                Text("This will remove all transfer records from history.")
+            }
+        }
+    }
+
+    private func deleteItems(at offsets: IndexSet) {
+        for index in offsets {
+            let item = filteredHistory[index]
+            withAnimation(LocalSendMotion.snappy) {
+                engine.deleteHistoryItem(id: item.id)
             }
         }
     }

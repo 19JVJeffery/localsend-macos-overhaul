@@ -9,6 +9,7 @@ struct LocalSendIOSApp: App {
     var body: some Scene {
         WindowGroup {
             AdaptiveRootView(engine: engine)
+                .preferredColorScheme(engine.settings.themeMode == .system ? nil : (engine.settings.themeMode == .dark ? .dark : .light))
                 .onAppear {
                     engine.start()
                 }

@@ -6,6 +6,10 @@ import LocalSendUI
 public struct MacReceiveView: View {
     @ObservedObject var engine: LocalSendEngine
     @Environment(\.colorScheme) private var colorScheme
+    @State private var isEditingAlias = false
+    @State private var aliasDraft = ""
+    @State private var copiedIP: String?
+    @State private var isWebSharePresented = false
 
     public init(engine: LocalSendEngine) {
         self.engine = engine
@@ -48,12 +52,46 @@ public struct MacReceiveView: View {
                 VStack(alignment: .leading, spacing: LocalSendTheme.spacingMedium) {
                     HStack(spacing: LocalSendTheme.spacingLarge) {
                         RadarScanningView(isScanning: true, accentColor: accentColor)
-                            .frame(width: 120, height: 120)
+                            .frame(width: 110, height: 110)
 
                         VStack(alignment: .leading, spacing: 6) {
                             HStack(spacing: 8) {
-                                Text(engine.settings.alias)
-                                    .font(.title2.weight(.bold))
+                                if isEditingAlias {
+                                    TextField("Device Name", text: $aliasDraft, onCommit: {
+                                        if !aliasDraft.trimmingCharacters(in: .whitespaces).isEmpty {
+                                            engine.settings.alias = aliasDraft
+                                            engine.settings.save()
+                                        }
+                                        isEditingAlias = false
+                                    })
+                                    .textFieldStyle(.roundedBorder)
+                                    .frame(maxWidth: 220)
+
+                                    Button("Save") {
+                                        if !aliasDraft.trimmingCharacters(in: .whitespaces).isEmpty {
+                                            engine.settings.alias = aliasDraft
+                                            engine.settings.save()
+                                        }
+                                        isEditingAlias = false
+                                    }
+                                    .buttonStyle(.borderedProminent)
+                                    .tint(accentColor)
+                                    .controlSize(.small)
+                                } else {
+                                    Text(engine.settings.alias)
+                                        .font(.title2.weight(.bold))
+
+                                    Button(action: {
+                                        aliasDraft = engine.settings.alias
+                                        isEditingAlias = true
+                                    }) {
+                                        Image(systemName: "pencil")
+                                            .font(.caption)
+                                            .foregroundColor(.secondary)
+                                    }
+                                    .buttonStyle(.plain)
+                                    .help("Edit device name")
+                                }
 
                                 Circle()
                                     .fill(LocalSendTheme.success)
@@ -64,7 +102,7 @@ public struct MacReceiveView: View {
                                     .foregroundColor(LocalSendTheme.success)
                             }
 
-                            Text("Visible to nearby devices on the local Wi-Fi and Ethernet network")
+                            Text("Visible to nearby devices on your Wi-Fi network. LocalSend is listening for transfers.")
                                 .font(.subheadline)
                                 .foregroundColor(.secondary)
 
@@ -76,21 +114,28 @@ public struct MacReceiveView: View {
                                 Label(engine.settings.deviceType.displayName, systemImage: engine.settings.deviceType.systemImageName)
                                     .font(.caption)
                                     .foregroundColor(.secondary)
+
+                                Button(action: { isWebSharePresented = true }) {
+                                    Label("Web Share Mode", systemImage: "globe")
+                                        .font(.caption.weight(.semibold))
+                                }
+                                .buttonStyle(.plain)
+                                .foregroundColor(accentColor)
                             }
                         }
 
                         Spacer()
                     }
                     .padding(LocalSendTheme.spacingLarge)
-                    .background(LocalSendTheme.cardBackground)
+                    .background(LocalSendTheme.cardBackground(for: engine.settings.accentColorPreference, colorScheme: colorScheme))
                     .clipShape(RoundedRectangle(cornerRadius: LocalSendTheme.cornerRadiusCard, style: .continuous))
                     .overlay(
                         RoundedRectangle(cornerRadius: LocalSendTheme.cornerRadiusCard, style: .continuous)
-                            .stroke(LocalSendTheme.borderSubtle, lineWidth: 1)
+                            .stroke(LocalSendTheme.cardBorder(for: engine.settings.accentColorPreference, colorScheme: colorScheme), lineWidth: 1)
                     )
                 }
 
-                // Receive Settings Card
+                // Receive Configuration Card
                 VStack(alignment: .leading, spacing: LocalSendTheme.spacingMedium) {
                     Text("Receive Configuration")
                         .font(.title3.weight(.bold))
@@ -127,7 +172,7 @@ public struct MacReceiveView: View {
                             VStack(alignment: .leading, spacing: 2) {
                                 Text("Quick Save (Auto-Accept)")
                                     .font(.headline)
-                                Text("Automatically save incoming files from anyone without asking for confirmation")
+                                Text("Automatically accept and save incoming transfers without prompting")
                                     .font(.caption)
                                     .foregroundColor(.secondary)
                             }
@@ -139,18 +184,24 @@ public struct MacReceiveView: View {
                         }
                     }
                     .padding(LocalSendTheme.spacingLarge)
-                    .background(LocalSendTheme.cardBackground)
+                    .background(LocalSendTheme.cardBackground(for: engine.settings.accentColorPreference, colorScheme: colorScheme))
                     .clipShape(RoundedRectangle(cornerRadius: LocalSendTheme.cornerRadiusCard, style: .continuous))
                     .overlay(
                         RoundedRectangle(cornerRadius: LocalSendTheme.cornerRadiusCard, style: .continuous)
-                            .stroke(LocalSendTheme.borderSubtle, lineWidth: 1)
+                            .stroke(LocalSendTheme.cardBorder(for: engine.settings.accentColorPreference, colorScheme: colorScheme), lineWidth: 1)
                     )
                 }
 
-                // Network Interfaces Info
+                // Network Interfaces Info Card
                 VStack(alignment: .leading, spacing: LocalSendTheme.spacingSmall) {
-                    Text("Local Network Interfaces")
-                        .font(.headline)
+                    HStack {
+                        Text("Local IP Addresses")
+                            .font(.headline)
+                        Spacer()
+                        Text("Click IP to copy")
+                            .font(.caption2)
+                            .foregroundColor(.secondary)
+                    }
 
                     let interfaces = NetworkAddressHelper.getLocalIPv4Addresses()
                     if interfaces.isEmpty {
@@ -159,29 +210,47 @@ public struct MacReceiveView: View {
                             .foregroundColor(.secondary)
                     } else {
                         ForEach(interfaces, id: \.address) { iface in
-                            HStack {
-                                Image(systemName: "wifi")
-                                    .foregroundColor(accentColor)
-                                Text(iface.name)
-                                    .font(.subheadline.weight(.medium))
-                                Spacer()
-                                Text("\(iface.address):\(engine.settings.port)")
-                                    .font(.system(.caption, design: .monospaced))
-                                    .foregroundColor(.secondary)
+                            Button(action: { copyIP(iface.address) }) {
+                                HStack {
+                                    Image(systemName: "wifi")
+                                        .foregroundColor(accentColor)
+                                    Text(iface.name)
+                                        .font(.subheadline.weight(.medium))
+                                        .foregroundColor(.primary)
+                                    Spacer()
+                                    if copiedIP == iface.address {
+                                        Text("Copied!")
+                                            .font(.caption.weight(.bold))
+                                            .foregroundColor(LocalSendTheme.success)
+                                    } else {
+                                        Text("\(iface.address):\(engine.settings.port)")
+                                            .font(.system(.caption, design: .monospaced))
+                                            .foregroundColor(.secondary)
+                                    }
+                                }
+                                .padding(.vertical, 6)
+                                .padding(.horizontal, 8)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 6, style: .continuous)
+                                        .fill(copiedIP == iface.address ? LocalSendTheme.success.opacity(0.12) : Color.clear)
+                                )
                             }
-                            .padding(.vertical, 4)
+                            .buttonStyle(.plain)
                         }
                     }
                 }
                 .padding(LocalSendTheme.spacingLarge)
-                .background(LocalSendTheme.cardBackground)
+                .background(LocalSendTheme.cardBackground(for: engine.settings.accentColorPreference, colorScheme: colorScheme))
                 .clipShape(RoundedRectangle(cornerRadius: LocalSendTheme.cornerRadiusCard, style: .continuous))
                 .overlay(
                     RoundedRectangle(cornerRadius: LocalSendTheme.cornerRadiusCard, style: .continuous)
-                        .stroke(LocalSendTheme.borderSubtle, lineWidth: 1)
+                        .stroke(LocalSendTheme.cardBorder(for: engine.settings.accentColorPreference, colorScheme: colorScheme), lineWidth: 1)
                 )
             }
             .padding(LocalSendTheme.spacingLarge)
+        }
+        .sheet(isPresented: $isWebSharePresented) {
+            WebShareView(engine: engine)
         }
     }
 
@@ -196,6 +265,21 @@ public struct MacReceiveView: View {
         if openPanel.runModal() == .OK, let selectedURL = openPanel.url {
             engine.settings.destinationDirectoryPath = selectedURL.path
             engine.settings.save()
+        }
+    }
+
+    private func copyIP(_ address: String) {
+        NSPasteboard.general.clearContents()
+        NSPasteboard.general.setString(address, forType: .string)
+        withAnimation(LocalSendMotion.snappy) {
+            copiedIP = address
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.8) {
+            withAnimation(LocalSendMotion.snappy) {
+                if copiedIP == address {
+                    copiedIP = nil
+                }
+            }
         }
     }
 }

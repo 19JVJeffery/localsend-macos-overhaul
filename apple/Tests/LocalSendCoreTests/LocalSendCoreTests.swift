@@ -151,4 +151,50 @@ final class LocalSendCoreTests: XCTestCase {
         let content = try String(contentsOf: file.url, encoding: .utf8)
         XCTAssertEqual(content, "Hello from LocalSend Apple!")
     }
+
+    func testThemeModePreferenceDefaultAndMigration() throws {
+        let settings = AppSettings()
+        XCTAssertEqual(settings.themeMode, .system)
+
+        let legacyJson = """
+        {
+            "alias": "Legacy Mac",
+            "deviceType": "desktop",
+            "port": 53317,
+            "multicastGroup": "224.0.0.167",
+            "multicastPort": 53317,
+            "autoAccept": false,
+            "destinationDirectoryPath": "/tmp",
+            "protocolType": "http",
+            "saveToHistory": true
+        }
+        """.data(using: .utf8)!
+
+        let decoded = try JSONDecoder().decode(AppSettings.self, from: legacyJson)
+        XCTAssertEqual(decoded.themeMode, .system)
+    }
+
+    func testDeleteHistoryItem() throws {
+        let manager = TransferHistoryManager.shared
+        manager.clearHistory()
+        XCTAssertTrue(manager.loadHistory().isEmpty)
+
+        let item = TransferHistoryItem(
+            remoteDeviceAlias: "iPhone",
+            remoteDeviceType: .mobile,
+            direction: .receiving,
+            fileCount: 1,
+            totalSize: 120,
+            status: .completed,
+            date: Date(),
+            fileNames: ["note.txt"],
+            destinationPaths: ["/tmp/note.txt"]
+        )
+
+        manager.addHistoryItem(item)
+        XCTAssertEqual(manager.loadHistory().count, 1)
+
+        manager.deleteItem(id: item.id)
+        XCTAssertEqual(manager.loadHistory().count, 0)
+    }
 }

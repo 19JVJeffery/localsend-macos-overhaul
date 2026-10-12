@@ -19,6 +19,20 @@ public enum AccentColorPreference: String, Codable, Sendable, CaseIterable {
     }
 }
 
+public enum ThemeModePreference: String, Codable, Sendable, CaseIterable {
+    case system = "system"
+    case light = "light"
+    case dark = "dark"
+
+    public var displayName: String {
+        switch self {
+        case .system: return "System"
+        case .light: return "Light"
+        case .dark: return "Dark"
+        }
+    }
+}
+
 /// Application settings persisted across app launches.
 public struct AppSettings: Codable, Sendable {
     public var alias: String
@@ -31,6 +45,7 @@ public struct AppSettings: Codable, Sendable {
     public var protocolType: ProtocolType
     public var saveToHistory: Bool
     public var accentColorPreference: AccentColorPreference
+    public var themeMode: ThemeModePreference
 
     public static var defaultDestinationDirectory: URL {
         #if os(macOS)
@@ -73,7 +88,8 @@ public struct AppSettings: Codable, Sendable {
         destinationDirectoryPath: String = defaultDestinationDirectory.path,
         protocolType: ProtocolType = .http,
         saveToHistory: Bool = true,
-        accentColorPreference: AccentColorPreference = .localSend
+        accentColorPreference: AccentColorPreference = .localSend,
+        themeMode: ThemeModePreference = .system
     ) {
         self.alias = alias
         self.deviceType = deviceType
@@ -85,6 +101,7 @@ public struct AppSettings: Codable, Sendable {
         self.protocolType = protocolType
         self.saveToHistory = saveToHistory
         self.accentColorPreference = accentColorPreference
+        self.themeMode = themeMode
     }
 
     public var destinationURL: URL {
@@ -94,7 +111,7 @@ public struct AppSettings: Codable, Sendable {
     enum CodingKeys: String, CodingKey {
         case alias, deviceType, port, multicastGroup, multicastPort
         case autoAccept, destinationDirectoryPath, protocolType, saveToHistory
-        case accentColorPreference
+        case accentColorPreference, themeMode
     }
 
     public init(from decoder: Decoder) throws {
@@ -109,6 +126,7 @@ public struct AppSettings: Codable, Sendable {
         protocolType = try container.decodeIfPresent(ProtocolType.self, forKey: .protocolType) ?? .http
         saveToHistory = try container.decodeIfPresent(Bool.self, forKey: .saveToHistory) ?? true
         accentColorPreference = try container.decodeIfPresent(AccentColorPreference.self, forKey: .accentColorPreference) ?? .localSend
+        themeMode = try container.decodeIfPresent(ThemeModePreference.self, forKey: .themeMode) ?? .system
     }
 
     private static let userDefaultsKey = "localsend_app_settings"

@@ -87,6 +87,62 @@ public enum LocalSendTheme {
     public static let info = Color(red: 0x00 / 255.0, green: 0x7A / 255.0, blue: 0xFF / 255.0)    // Apple Blue
 
     // Backgrounds
+    public static func windowBackground(for preference: AccentColorPreference = .localSend, colorScheme: ColorScheme = .light) -> Color {
+        switch preference {
+        case .localSend:
+            return colorScheme == .dark
+                ? Color(red: 0x14 / 255.0, green: 0x1A / 255.0, blue: 0x1A / 255.0) // Rich deep dark teal slate
+                : Color(red: 0xF4 / 255.0, green: 0xF8 / 255.0, blue: 0xF8 / 255.0) // Light delicate teal mist
+        case .system:
+            #if os(macOS)
+            return Color(nsColor: .windowBackgroundColor)
+            #else
+            return Color(uiColor: .systemBackground)
+            #endif
+        }
+    }
+
+    public static func sidebarBackground(for preference: AccentColorPreference = .localSend, colorScheme: ColorScheme = .light) -> Color {
+        switch preference {
+        case .localSend:
+            return colorScheme == .dark
+                ? Color(red: 0x0F / 255.0, green: 0x15 / 255.0, blue: 0x15 / 255.0) // Distinct deep tinted dark teal
+                : Color(red: 0xEA / 255.0, green: 0xF2 / 255.0, blue: 0xF2 / 255.0) // Distinct cool teal mist
+        case .system:
+            #if os(macOS)
+            return Color(nsColor: .underPageBackgroundColor)
+            #else
+            return Color(uiColor: .secondarySystemBackground)
+            #endif
+        }
+    }
+
+    public static func cardBackground(for preference: AccentColorPreference = .localSend, colorScheme: ColorScheme = .light) -> Color {
+        switch preference {
+        case .localSend:
+            return colorScheme == .dark
+                ? Color(red: 0x18 / 255.0, green: 0x22 / 255.0, blue: 0x22 / 255.0)
+                : Color(red: 0xFF / 255.0, green: 0xFF / 255.0, blue: 0xFF / 255.0).opacity(0.92)
+        case .system:
+            #if os(macOS)
+            return Color(nsColor: .controlBackgroundColor).opacity(0.8)
+            #else
+            return Color(uiColor: .secondarySystemGroupedBackground)
+            #endif
+        }
+    }
+
+    public static func cardBorder(for preference: AccentColorPreference = .localSend, colorScheme: ColorScheme = .light) -> Color {
+        switch preference {
+        case .localSend:
+            return colorScheme == .dark
+                ? Brand.teal300.opacity(0.20)
+                : Brand.teal700.opacity(0.14)
+        case .system:
+            return borderSubtle
+        }
+    }
+
     #if os(macOS)
     public static let primaryBackground = Color(nsColor: .windowBackgroundColor)
     public static let secondaryBackground = Color(nsColor: .controlBackgroundColor)

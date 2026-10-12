@@ -10,6 +10,7 @@ struct LocalSendMacApp: App {
         WindowGroup {
             MacMainView(engine: engine)
                 .frame(minWidth: 800, minHeight: 520)
+                .preferredColorScheme(engine.settings.themeMode == .system ? nil : (engine.settings.themeMode == .dark ? .dark : .light))
                 .onAppear {
                     engine.start()
                 }

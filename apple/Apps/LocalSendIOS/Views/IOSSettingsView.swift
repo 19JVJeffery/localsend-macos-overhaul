@@ -6,6 +6,8 @@ public struct IOSSettingsView: View {
     @ObservedObject var engine: LocalSendEngine
     @Environment(\.colorScheme) private var colorScheme
     @State private var isShowcasePresented = false
+    @State private var isTroubleshootPresented = false
+    @State private var isAboutPresented = false
 
     public init(engine: LocalSendEngine) {
         self.engine = engine
@@ -18,19 +20,25 @@ public struct IOSSettingsView: View {
     public var body: some View {
         NavigationStack {
             Form {
-                // Accent Color
+                // Theme & Accent Color
                 Section("Appearance & Palette") {
+                    Picker("Theme", selection: $engine.settings.themeMode) {
+                        ForEach(ThemeModePreference.allCases, id: \.self) { mode in
+                            Text(mode.displayName).tag(mode)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+
                     Picker("Accent Colour", selection: $engine.settings.accentColorPreference) {
                         ForEach(AccentColorPreference.allCases, id: \.self) { pref in
                             Text(pref.displayName).tag(pref)
                         }
                     }
-                    .pickerStyle(.inline)
 
                     HStack {
                         Circle()
                             .fill(currentAccent)
-                            .frame(width: 24, height: 24)
+                            .frame(width: 20, height: 20)
 
                         Text(engine.settings.accentColorPreference.subtitle)
                             .font(.caption)
@@ -70,8 +78,18 @@ public struct IOSSettingsView: View {
                     Toggle("Save to Transfer History", isOn: $engine.settings.saveToHistory)
                 }
 
-                // Motion Showcase
-                Section("Motion & Visual Design") {
+                // Help & About
+                Section("Help & Information") {
+                    Button(action: { isTroubleshootPresented = true }) {
+                        Label("Troubleshoot Connection...", systemImage: "wrench.and.screwdriver")
+                            .foregroundColor(.primary)
+                    }
+
+                    Button(action: { isAboutPresented = true }) {
+                        Label("About LocalSend...", systemImage: "info.circle")
+                            .foregroundColor(.primary)
+                    }
+
                     Button(action: { isShowcasePresented = true }) {
                         Label("Animation & Motion Showcase...", systemImage: "sparkles")
                             .foregroundColor(currentAccent)
@@ -92,7 +110,7 @@ public struct IOSSettingsView: View {
             .tint(currentAccent)
             .sheet(isPresented: $isShowcasePresented) {
                 NavigationStack {
-                    DeveloperShowcaseView()
+                    DeveloperShowcaseView(engine: engine)
                         .navigationTitle("Showcase")
                         .navigationBarTitleDisplayMode(.inline)
                         .toolbar {
@@ -102,11 +120,18 @@ public struct IOSSettingsView: View {
                         }
                 }
             }
+            .sheet(isPresented: $isTroubleshootPresented) {
+                TroubleshootView(engine: engine)
+            }
+            .sheet(isPresented: $isAboutPresented) {
+                AboutView(engine: engine)
+            }
             .onChange(of: engine.settings.alias) { _ in engine.settings.save() }
             .onChange(of: engine.settings.deviceType) { _ in engine.settings.save() }
             .onChange(of: engine.settings.autoAccept) { _ in engine.settings.save() }
             .onChange(of: engine.settings.saveToHistory) { _ in engine.settings.save() }
             .onChange(of: engine.settings.accentColorPreference) { _ in engine.settings.save() }
+            .onChange(of: engine.settings.themeMode) { _ in engine.settings.save() }
         }
     }
 }

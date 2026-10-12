@@ -34,4 +34,14 @@ public final class TransferHistoryManager: @unchecked Sendable {
             UserDefaults.standard.removeObject(forKey: userDefaultsKey)
         }
     }
+
+    public func deleteItem(id: String) {
+        queue.sync {
+            var items = loadHistory()
+            items.removeAll { $0.id == id }
+            if let data = try? JSONEncoder().encode(items) {
+                UserDefaults.standard.set(data, forKey: userDefaultsKey)
+            }
+        }
+    }
 }

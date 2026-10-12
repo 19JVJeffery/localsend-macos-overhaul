@@ -12,6 +12,7 @@ public struct MacSendView: View {
     @State private var isFileImporterPresented = false
     @State private var isManualSendPresented = false
     @State private var isTextSendPresented = false
+    @State private var isTroubleshootPresented = false
     @State private var selectedDevice: Device?
 
     public init(engine: LocalSendEngine) {
@@ -160,6 +161,13 @@ public struct MacSendView: View {
                             Text("Scanning local network for LocalSend devices...")
                                 .font(.subheadline)
                                 .foregroundColor(.secondary)
+
+                            Button(action: { isTroubleshootPresented = true }) {
+                                Label("Troubleshoot Connection", systemImage: "wrench.and.screwdriver")
+                                    .font(.caption.weight(.semibold))
+                            }
+                            .buttonStyle(.bordered)
+                            .tint(accentColor)
                         }
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, LocalSendTheme.spacingLarge)
@@ -208,6 +216,9 @@ public struct MacSendView: View {
                 engine.stageTextMessage(text)
             }
         }
+        .sheet(isPresented: $isTroubleshootPresented) {
+            TroubleshootView(engine: engine)
+        }
         .onDrop(of: [.fileURL], isTargeted: $isTargetedForDrop) { providers in
             handleDrop(providers: providers)
         }
@@ -238,7 +249,7 @@ public struct MacSendView: View {
                     )
                     .background(
                         RoundedRectangle(cornerRadius: LocalSendTheme.cornerRadiusCard, style: .continuous)
-                            .fill(isTargetedForDrop ? accentColor.opacity(0.08) : LocalSendTheme.cardBackground)
+                            .fill(isTargetedForDrop ? accentColor.opacity(0.08) : LocalSendTheme.cardBackground(for: engine.settings.accentColorPreference, colorScheme: colorScheme))
                     )
             )
         }

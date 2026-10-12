@@ -12,6 +12,7 @@ public struct IOSSendView: View {
     @State private var selectedPhotoItems: [PhotosPickerItem] = []
     @State private var isManualSendPresented = false
     @State private var isTextSendPresented = false
+    @State private var isTroubleshootPresented = false
 
     public init(engine: LocalSendEngine) {
         self.engine = engine
@@ -129,6 +130,13 @@ public struct IOSSendView: View {
                                 Text("Searching for nearby devices on Wi-Fi...")
                                     .font(.subheadline)
                                     .foregroundColor(.secondary)
+
+                                Button(action: { isTroubleshootPresented = true }) {
+                                    Label("Troubleshoot Connection", systemImage: "wrench.and.screwdriver")
+                                        .font(.caption.weight(.semibold))
+                                }
+                                .buttonStyle(.bordered)
+                                .tint(accentColor)
                             }
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, LocalSendTheme.spacingMedium)
@@ -169,6 +177,9 @@ public struct IOSSendView: View {
                 SendTextMessageDialog(isPresented: $isTextSendPresented) { text in
                     engine.stageTextMessage(text)
                 }
+            }
+            .sheet(isPresented: $isTroubleshootPresented) {
+                TroubleshootView(engine: engine)
             }
             .onChange(of: selectedPhotoItems) { newItems in
                 loadPhotos(items: newItems)
@@ -220,8 +231,12 @@ public struct IOSSendView: View {
         }
         .frame(maxWidth: .infinity)
         .padding(LocalSendTheme.spacingLarge)
-        .background(LocalSendTheme.cardBackground)
+        .background(LocalSendTheme.cardBackground(for: engine.settings.accentColorPreference, colorScheme: colorScheme))
         .clipShape(RoundedRectangle(cornerRadius: LocalSendTheme.cornerRadiusCard, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: LocalSendTheme.cornerRadiusCard, style: .continuous)
+                .stroke(LocalSendTheme.cardBorder(for: engine.settings.accentColorPreference, colorScheme: colorScheme), lineWidth: 1)
+        )
     }
 
     private var addMoreButtonsView: some View {

@@ -10,7 +10,11 @@ public struct DeveloperShowcaseView: View {
     @State private var showCelebration = false
     @Environment(\.colorScheme) private var colorScheme
 
-    public init() {}
+    public init(engine: LocalSendEngine? = nil) {
+        if let engine = engine {
+            _colorPreference = State(initialValue: engine.settings.accentColorPreference)
+        }
+    }
 
     public var body: some View {
         ScrollView {

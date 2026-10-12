@@ -24,6 +24,8 @@ public struct IOSPadSplitView: View {
     @ObservedObject var engine: LocalSendEngine
     @Environment(\.colorScheme) private var colorScheme
     @State private var selectedTab: PadTabItem? = .send
+    @State private var isTroubleshootPresented = false
+    @State private var isWebSharePresented = false
 
     public init(engine: LocalSendEngine) {
         self.engine = engine
@@ -50,21 +52,47 @@ public struct IOSPadSplitView: View {
             }
             .listStyle(.sidebar)
             .navigationTitle("LocalSend")
+            .toolbar {
+                ToolbarItem(placement: .bottomBar) {
+                    HStack {
+                        Button(action: { isTroubleshootPresented = true }) {
+                            Label("Troubleshoot", systemImage: "wrench.and.screwdriver")
+                                .font(.caption)
+                        }
+                        Spacer()
+                        Button(action: { isWebSharePresented = true }) {
+                            Label("Web Share", systemImage: "globe")
+                                .font(.caption)
+                        }
+                    }
+                }
+            }
         } detail: {
-            switch selectedTab {
-            case .send:
-                IOSSendView(engine: engine)
-            case .receive:
-                IOSReceiveView(engine: engine)
-            case .history:
-                IOSHistoryView(engine: engine)
-            case .settings:
-                IOSSettingsView(engine: engine)
-            case .none:
-                IOSSendView(engine: engine)
+            ZStack {
+                LocalSendTheme.windowBackground(for: engine.settings.accentColorPreference, colorScheme: colorScheme)
+                    .ignoresSafeArea()
+
+                switch selectedTab {
+                case .send:
+                    IOSSendView(engine: engine)
+                case .receive:
+                    IOSReceiveView(engine: engine)
+                case .history:
+                    IOSHistoryView(engine: engine)
+                case .settings:
+                    IOSSettingsView(engine: engine)
+                case .none:
+                    IOSSendView(engine: engine)
+                }
             }
         }
         .tint(accentColor)
+        .sheet(isPresented: $isTroubleshootPresented) {
+            TroubleshootView(engine: engine)
+        }
+        .sheet(isPresented: $isWebSharePresented) {
+            WebShareView(engine: engine)
+        }
     }
 
     @ViewBuilder

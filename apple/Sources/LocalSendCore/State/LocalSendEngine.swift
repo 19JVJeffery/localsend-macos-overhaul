@@ -30,6 +30,10 @@ public final class LocalSendEngine: ObservableObject {
         setupServerCallbacks()
     }
 
+    public var localIPAddresses: [String] {
+        NetworkAddressHelper.getLocalIPv4Addresses().map(\.address)
+    }
+
     /// Starts local server and network discovery.
     public func start() {
         guard !isRunning else { return }
@@ -523,5 +527,10 @@ public final class LocalSendEngine: ObservableObject {
     public func clearHistory() {
         historyManager.clearHistory()
         transferHistory = []
+    }
+
+    public func deleteHistoryItem(id: String) {
+        historyManager.deleteItem(id: id)
+        transferHistory.removeAll { $0.id == id }
     }
 }
