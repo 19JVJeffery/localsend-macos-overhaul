@@ -4,9 +4,14 @@ import LocalSendUI
 
 public struct IOSReceiveView: View {
     @ObservedObject var engine: LocalSendEngine
+    @Environment(\.colorScheme) private var colorScheme
 
     public init(engine: LocalSendEngine) {
         self.engine = engine
+    }
+
+    private var accentColor: Color {
+        LocalSendTheme.accent(for: engine.settings.accentColorPreference, colorScheme: colorScheme)
     }
 
     public var body: some View {
@@ -22,31 +27,24 @@ public struct IOSReceiveView: View {
                                 .font(.headline)
 
                             ForEach(incoming) { session in
-                                TransferProgressCard(session: session) {
+                                TransferProgressCard(session: session, accentColor: LocalSendTheme.success) {
                                     engine.cancelTransfer(id: session.id)
                                 }
                             }
                         }
                     }
 
-                    // Device Radar Card
+                    // Radar Beacon Card
                     VStack(spacing: LocalSendTheme.spacingMedium) {
-                        ZStack {
-                            Circle()
-                                .fill(Color.green.opacity(0.12))
-                                .frame(width: 90, height: 90)
-
-                            Image(systemName: "antenna.radiowaves.left.and.right")
-                                .font(.system(size: 40))
-                                .foregroundColor(.green)
-                        }
+                        RadarScanningView(isScanning: true, accentColor: accentColor)
+                            .frame(width: 140, height: 140)
 
                         VStack(spacing: 4) {
                             HStack {
                                 Text(engine.settings.alias)
                                     .font(.title2.weight(.bold))
                                 Circle()
-                                    .fill(Color.green)
+                                    .fill(LocalSendTheme.success)
                                     .frame(width: 8, height: 8)
                             }
 
@@ -58,7 +56,7 @@ public struct IOSReceiveView: View {
                     .frame(maxWidth: .infinity)
                     .padding(LocalSendTheme.spacingLarge)
                     .background(LocalSendTheme.cardBackground)
-                    .clipShape(RoundedRectangle(cornerRadius: LocalSendTheme.cornerRadiusMedium, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: LocalSendTheme.cornerRadiusCard, style: .continuous))
 
                     // Receive Settings Card
                     VStack(spacing: LocalSendTheme.spacingMedium) {
@@ -71,14 +69,14 @@ public struct IOSReceiveView: View {
                                     .foregroundColor(.secondary)
                             }
                         }
-                        .tint(.accentColor)
+                        .tint(accentColor)
                         .onChange(of: engine.settings.autoAccept) { _ in
                             engine.settings.save()
                         }
                     }
                     .padding(LocalSendTheme.spacingMedium)
                     .background(LocalSendTheme.cardBackground)
-                    .clipShape(RoundedRectangle(cornerRadius: LocalSendTheme.cornerRadiusMedium, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: LocalSendTheme.cornerRadiusCard, style: .continuous))
 
                     // Network IP info
                     VStack(alignment: .leading, spacing: LocalSendTheme.spacingSmall) {
@@ -94,7 +92,7 @@ public struct IOSReceiveView: View {
                             ForEach(ifaces, id: \.address) { iface in
                                 HStack {
                                     Image(systemName: "wifi")
-                                        .foregroundColor(.secondary)
+                                        .foregroundColor(accentColor)
                                     Text(iface.name)
                                         .font(.subheadline)
                                     Spacer()
@@ -107,11 +105,12 @@ public struct IOSReceiveView: View {
                     }
                     .padding(LocalSendTheme.spacingMedium)
                     .background(LocalSendTheme.cardBackground)
-                    .clipShape(RoundedRectangle(cornerRadius: LocalSendTheme.cornerRadiusMedium, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: LocalSendTheme.cornerRadiusCard, style: .continuous))
                 }
                 .padding()
             }
             .navigationTitle("Receive")
+            .tint(accentColor)
         }
     }
 }

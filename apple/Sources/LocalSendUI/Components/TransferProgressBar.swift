@@ -1,23 +1,35 @@
 import SwiftUI
 import LocalSendCore
 
-/// Card view representing an in-flight or completed transfer session with progress bar and controls.
+/// Card view representing an in-flight or completed transfer session with animated progress bar and controls.
 public struct TransferProgressCard: View {
     public let session: TransferSession
+    public let accentColor: Color
     public let onCancel: () -> Void
 
-    public init(session: TransferSession, onCancel: @escaping () -> Void) {
+    public init(
+        session: TransferSession,
+        accentColor: Color = LocalSendTheme.accent(),
+        onCancel: @escaping () -> Void
+    ) {
         self.session = session
+        self.accentColor = accentColor
         self.onCancel = onCancel
     }
 
     public var body: some View {
         VStack(alignment: .leading, spacing: LocalSendTheme.spacingSmall) {
-            // Header: Remote device + Direction + Status
+            // Header: Direction + Device + File count
             HStack {
-                Image(systemName: session.direction == .sending ? "arrow.up.circle.fill" : "arrow.down.circle.fill")
-                    .foregroundColor(session.direction == .sending ? .accentColor : .green)
-                    .font(.title3)
+                ZStack {
+                    Circle()
+                        .fill(session.direction == .sending ? accentColor.opacity(0.15) : LocalSendTheme.success.opacity(0.15))
+                        .frame(width: 36, height: 36)
+
+                    Image(systemName: session.direction == .sending ? "arrow.up.circle.fill" : "arrow.down.circle.fill")
+                        .foregroundColor(session.direction == .sending ? accentColor : LocalSendTheme.success)
+                        .font(.system(size: 20))
+                }
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(session.direction == .sending ? "Sending to \(session.remoteDevice.alias)" : "Receiving from \(session.remoteDevice.alias)")
@@ -32,7 +44,7 @@ public struct TransferProgressCard: View {
 
                 if !session.status.isTerminal {
                     Button(action: onCancel) {
-                        Image(systemName: "xmark.circle")
+                        Image(systemName: "xmark.circle.fill")
                             .foregroundColor(.secondary)
                             .font(.title3)
                     }
@@ -43,14 +55,17 @@ public struct TransferProgressCard: View {
                 }
             }
 
-            // Progress Bar
+            // Animated Modern Progress Bar
             if !session.status.isTerminal {
-                ProgressView(value: session.progress, total: 1.0)
-                    .progressViewStyle(.linear)
+                ModernProgressBar(
+                    progress: session.progress,
+                    accentColor: session.direction == .sending ? accentColor : LocalSendTheme.success,
+                    height: 8
+                )
 
                 HStack {
                     Text("\(Int(session.progress * 100))%")
-                        .font(.caption)
+                        .font(.system(.caption, design: .monospaced).weight(.semibold))
                         .foregroundColor(.secondary)
 
                     Spacer()
@@ -61,15 +76,22 @@ public struct TransferProgressCard: View {
                 }
             }
 
-            // Error message if any
+            // Error message if failed
             if let error = session.errorMessage {
                 Text(error)
                     .font(.caption)
-                    .foregroundColor(.red)
+                    .foregroundColor(LocalSendTheme.error)
             }
         }
         .padding(LocalSendTheme.spacingMedium)
         .background(LocalSendTheme.cardBackground)
-        .clipShape(RoundedRectangle(cornerRadius: LocalSendTheme.cornerRadiusMedium, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: LocalSendTheme.cornerRadiusCard, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: LocalSendTheme.cornerRadiusCard, style: .continuous)
+                .stroke(LocalSendTheme.borderSubtle, lineWidth: 1)
+        )
+        .localSendShadow(LocalSendTheme.shadowSubtle)
+        .animation(LocalSendMotion.standard, value: session.progress)
+        .animation(LocalSendMotion.standard, value: session.status)
     }
 }

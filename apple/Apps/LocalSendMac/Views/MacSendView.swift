@@ -1,57 +1,102 @@
 import SwiftUI
 import UniformTypeIdentifiers
+import AppKit
 import LocalSendCore
 import LocalSendUI
 
 public struct MacSendView: View {
     @ObservedObject var engine: LocalSendEngine
+    @Environment(\.colorScheme) private var colorScheme
+
     @State private var isTargetedForDrop = false
     @State private var isFileImporterPresented = false
+    @State private var isManualSendPresented = false
+    @State private var isTextSendPresented = false
     @State private var selectedDevice: Device?
 
     public init(engine: LocalSendEngine) {
         self.engine = engine
     }
 
+    private var accentColor: Color {
+        LocalSendTheme.accent(for: engine.settings.accentColorPreference, colorScheme: colorScheme)
+    }
+
+    private var totalStagedSize: Int64 {
+        engine.stagedFiles.reduce(0) { $0 + $1.size }
+    }
+
     public var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: LocalSendTheme.spacingLarge) {
 
-                // Active Transfers Section
+                // 1. Active Transfers Section
                 if !engine.activeTransfers.isEmpty {
                     VStack(alignment: .leading, spacing: LocalSendTheme.spacingSmall) {
-                        Text("Active Transfers")
-                            .font(.title3.weight(.bold))
+                        HStack {
+                            Text("Active Transfers")
+                                .font(.title3.weight(.bold))
+
+                            Spacer()
+
+                            MorphingStatusPill(
+                                status: .transferring(progress: engine.activeTransfers.first?.progress ?? 0),
+                                accentColor: accentColor
+                            )
+                        }
 
                         ForEach(engine.activeTransfers) { session in
-                            TransferProgressCard(session: session) {
+                            TransferProgressCard(session: session, accentColor: accentColor) {
                                 engine.cancelTransfer(id: session.id)
                             }
                         }
                     }
+                    Divider()
                 }
 
-                // 1. Staged Files Section
+                // 2. Files to Send Section
                 VStack(alignment: .leading, spacing: LocalSendTheme.spacingSmall) {
                     HStack {
-                        Text("Files to Send")
-                            .font(.title3.weight(.bold))
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Files to Send")
+                                .font(.title3.weight(.bold))
+
+                            if !engine.stagedFiles.isEmpty {
+                                Text("\(engine.stagedFiles.count) file\(engine.stagedFiles.count == 1 ? "" : "s") • \(LocalSendFormatters.formatFileSize(totalStagedSize))")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
+                        }
 
                         Spacer()
 
+                        // Action Buttons: Files, Folder, Text, Clear
                         if !engine.stagedFiles.isEmpty {
                             Button("Clear All") {
-                                engine.clearStagedFiles()
+                                withAnimation(LocalSendMotion.snappy) {
+                                    engine.clearStagedFiles()
+                                }
                             }
                             .buttonStyle(.plain)
                             .foregroundColor(.secondary)
                             .font(.caption)
+                            .padding(.trailing, 4)
                         }
 
-                        Button(action: { isFileImporterPresented = true }) {
-                            Label("Add Files...", systemImage: "plus")
+                        Menu {
+                            Button(action: { isFileImporterPresented = true }) {
+                                Label("Add Files...", systemImage: "doc.badge.plus")
+                            }
+                            Button(action: { chooseFolder() }) {
+                                Label("Add Folder...", systemImage: "folder.badge.plus")
+                            }
+                            Button(action: { isTextSendPresented = true }) {
+                                Label("Send Text / Clipboard...", systemImage: "text.bubble")
+                            }
+                        } label: {
+                            Label("Add...", systemImage: "plus")
                         }
-                        .buttonStyle(.bordered)
+                        .menuStyle(.borderedButton)
                     }
 
                     // Drop Target & File List
@@ -61,51 +106,73 @@ public struct MacSendView: View {
                         VStack(spacing: LocalSendTheme.spacingSmall) {
                             ForEach(engine.stagedFiles) { file in
                                 StagedFileItemView(file: file) {
-                                    engine.removeStagedFile(id: file.id)
+                                    withAnimation(LocalSendMotion.snappy) {
+                                        engine.removeStagedFile(id: file.id)
+                                    }
                                 }
+                                .transition(.asymmetric(
+                                    insertion: .scale(scale: 0.95).combined(with: .opacity),
+                                    removal: .opacity.combined(with: .move(edge: .trailing))
+                                ))
                             }
 
-                            // Quick add more drop banner
                             dropTargetMiniView
                         }
+                        .animation(LocalSendMotion.standard, value: engine.stagedFiles)
                     }
                 }
 
                 Divider()
 
-                // 2. Nearby Devices (AirDrop style)
-                VStack(alignment: .leading, spacing: LocalSendTheme.spacingSmall) {
+                // 3. Nearby Devices (AirDrop radar style)
+                VStack(alignment: .leading, spacing: LocalSendTheme.spacingMedium) {
                     HStack {
                         VStack(alignment: .leading, spacing: 2) {
                             Text("Nearby Devices")
                                 .font(.title3.weight(.bold))
-                            Text("Select a device to send the staged files")
+                            Text(engine.stagedFiles.isEmpty ? "Select files above, then choose a recipient" : "Click a device to start transfer")
                                 .font(.subheadline)
                                 .foregroundColor(.secondary)
                         }
 
                         Spacer()
 
+                        Button(action: { isManualSendPresented = true }) {
+                            Label("Send to IP...", systemImage: "network")
+                        }
+                        .buttonStyle(.bordered)
+                        .controlSize(.small)
+
                         Button(action: { engine.refreshDiscovery() }) {
-                            Label("Refresh", systemImage: "arrow.clockwise")
+                            Image(systemName: "arrow.clockwise")
+                                .font(.body.weight(.semibold))
                         }
                         .buttonStyle(.plain)
-                        .foregroundColor(.accentColor)
+                        .foregroundColor(accentColor)
+                        .help("Refresh nearby devices")
                     }
 
                     if engine.discoveredDevices.isEmpty {
-                        EmptyStateView(
-                            iconName: "antenna.radiowaves.left.and.right",
-                            title: "Looking for Devices",
-                            message: "Make sure LocalSend is open on other devices connected to the same Wi-Fi network."
-                        )
-                        .frame(height: 180)
+                        VStack(spacing: LocalSendTheme.spacingMedium) {
+                            RadarScanningView(isScanning: true, accentColor: accentColor)
+                                .frame(height: 180)
+
+                            Text("Scanning local network for LocalSend devices...")
+                                .font(.subheadline)
+                                .foregroundColor(.secondary)
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, LocalSendTheme.spacingLarge)
                     } else {
-                        LazyVGrid(columns: [GridItem(.adaptive(minimum: 140, maximum: 160), spacing: LocalSendTheme.spacingMedium)], spacing: LocalSendTheme.spacingMedium) {
+                        LazyVGrid(
+                            columns: [GridItem(.adaptive(minimum: 140, maximum: 170), spacing: LocalSendTheme.spacingMedium)],
+                            spacing: LocalSendTheme.spacingMedium
+                        ) {
                             ForEach(engine.discoveredDevices) { device in
                                 DeviceCard(
                                     device: device,
-                                    isSelected: selectedDevice?.id == device.id
+                                    isSelected: selectedDevice?.id == device.id,
+                                    accentColor: accentColor
                                 ) {
                                     selectedDevice = device
                                     if !engine.stagedFiles.isEmpty {
@@ -113,8 +180,10 @@ public struct MacSendView: View {
                                     }
                                 }
                                 .help(engine.stagedFiles.isEmpty ? "Select files first to send to \(device.alias)" : "Click to send files to \(device.alias)")
+                                .transition(.scale.combined(with: .opacity))
                             }
                         }
+                        .animation(LocalSendMotion.standard, value: engine.discoveredDevices)
                     }
                 }
             }
@@ -125,11 +194,18 @@ public struct MacSendView: View {
             allowedContentTypes: [.item],
             allowsMultipleSelection: true
         ) { result in
-            switch result {
-            case .success(let urls):
+            if case .success(let urls) = result {
                 engine.addStagedFiles(urls: urls)
-            case .failure(let error):
-                print("Failed to pick files: \(error)")
+            }
+        }
+        .sheet(isPresented: $isManualSendPresented) {
+            ManualSendDialog(isPresented: $isManualSendPresented) { ip, port in
+                engine.sendStagedFiles(toIP: ip, port: port)
+            }
+        }
+        .sheet(isPresented: $isTextSendPresented) {
+            SendTextMessageDialog(isPresented: $isTextSendPresented) { text in
+                engine.stageTextMessage(text)
             }
         }
         .onDrop(of: [.fileURL], isTargeted: $isTargetedForDrop) { providers in
@@ -141,39 +217,41 @@ public struct MacSendView: View {
         Button(action: { isFileImporterPresented = true }) {
             VStack(spacing: LocalSendTheme.spacingSmall) {
                 Image(systemName: "arrow.down.doc")
-                    .font(.system(size: 36, weight: .light))
-                    .foregroundColor(isTargetedForDrop ? .accentColor : .secondary)
+                    .font(.system(size: 38, weight: .light))
+                    .foregroundColor(isTargetedForDrop ? accentColor : .secondary)
 
                 Text("Drop files here or click to browse")
                     .font(.headline)
                     .foregroundColor(.primary)
 
-                Text("Supports any file, document, photo or folder")
+                Text("Supports documents, folders, images, videos or archives")
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
             .frame(maxWidth: .infinity)
-            .padding(LocalSendTheme.spacingExtraLarge)
+            .padding(LocalSendTheme.spacingXL)
             .background(
-                RoundedRectangle(cornerRadius: LocalSendTheme.cornerRadiusMedium, style: .continuous)
+                RoundedRectangle(cornerRadius: LocalSendTheme.cornerRadiusCard, style: .continuous)
                     .strokeBorder(
-                        isTargetedForDrop ? Color.accentColor : Color.secondary.opacity(0.3),
+                        isTargetedForDrop ? accentColor : Color.secondary.opacity(0.3),
                         style: StrokeStyle(lineWidth: 2, dash: [8, 4])
                     )
                     .background(
-                        RoundedRectangle(cornerRadius: LocalSendTheme.cornerRadiusMedium, style: .continuous)
-                            .fill(isTargetedForDrop ? Color.accentColor.opacity(0.08) : LocalSendTheme.cardBackground)
+                        RoundedRectangle(cornerRadius: LocalSendTheme.cornerRadiusCard, style: .continuous)
+                            .fill(isTargetedForDrop ? accentColor.opacity(0.08) : LocalSendTheme.cardBackground)
                     )
             )
         }
         .buttonStyle(.plain)
+        .scaleEffect(isTargetedForDrop ? 1.02 : 1.0)
+        .animation(LocalSendMotion.snappy, value: isTargetedForDrop)
     }
 
     private var dropTargetMiniView: some View {
         Button(action: { isFileImporterPresented = true }) {
             HStack {
-                Image(systemName: "plus.circle")
-                    .foregroundColor(.secondary)
+                Image(systemName: "plus.circle.fill")
+                    .foregroundColor(accentColor)
                 Text("Drop more files or click to add")
                     .font(.subheadline)
                     .foregroundColor(.secondary)
@@ -182,11 +260,22 @@ public struct MacSendView: View {
             .padding(LocalSendTheme.spacingSmall)
             .frame(maxWidth: .infinity)
             .background(
-                RoundedRectangle(cornerRadius: LocalSendTheme.cornerRadiusSmall, style: .continuous)
+                RoundedRectangle(cornerRadius: LocalSendTheme.cornerRadiusMedium, style: .continuous)
                     .strokeBorder(Color.secondary.opacity(0.2), style: StrokeStyle(lineWidth: 1, dash: [4, 4]))
             )
         }
         .buttonStyle(.plain)
+    }
+
+    private func chooseFolder() {
+        let openPanel = NSOpenPanel()
+        openPanel.canChooseFiles = false
+        openPanel.canChooseDirectories = true
+        openPanel.allowsMultipleSelection = true
+        openPanel.prompt = "Select Folder"
+        if openPanel.runModal() == .OK {
+            engine.addStagedFiles(urls: openPanel.urls)
+        }
     }
 
     private func handleDrop(providers: [NSItemProvider]) -> Bool {

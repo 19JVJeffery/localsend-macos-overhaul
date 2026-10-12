@@ -110,4 +110,45 @@ final class LocalSendCoreTests: XCTestCase {
         XCTAssertEqual(device.urlString, "http://192.168.1.100:53317")
         XCTAssertEqual(device.formattedAddress, "192.168.1.100:53317")
     }
+
+    func testAccentColorPreferenceDefaultAndMigration() throws {
+        // 1. Default should be localSend
+        let settings = AppSettings()
+        XCTAssertEqual(settings.accentColorPreference, .localSend)
+
+        // 2. Backward compatibility: JSON missing accentColorPreference should decode as .localSend
+        let legacyJson = """
+        {
+            "alias": "Legacy Mac",
+            "deviceType": "desktop",
+            "port": 53317,
+            "multicastGroup": "224.0.0.167",
+            "multicastPort": 53317,
+            "autoAccept": false,
+            "destinationDirectoryPath": "/tmp",
+            "protocolType": "http",
+            "saveToHistory": true
+        }
+        """.data(using: .utf8)!
+
+        let decoded = try JSONDecoder().decode(AppSettings.self, from: legacyJson)
+        XCTAssertEqual(decoded.accentColorPreference, .localSend, "Missing preference should default to localSend")
+    }
+
+    @MainActor
+    func testTextMessageStaging() throws {
+        let engine = LocalSendEngine()
+        engine.clearStagedFiles()
+        XCTAssertTrue(engine.stagedFiles.isEmpty)
+
+        engine.stageTextMessage("Hello from LocalSend Apple!")
+        XCTAssertEqual(engine.stagedFiles.count, 1)
+
+        let file = engine.stagedFiles.first!
+        XCTAssertEqual(file.fileExtension, "txt")
+        XCTAssertTrue(file.name.hasPrefix("message-"))
+
+        let content = try String(contentsOf: file.url, encoding: .utf8)
+        XCTAssertEqual(content, "Hello from LocalSend Apple!")
+    }
 }

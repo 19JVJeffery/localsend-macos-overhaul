@@ -1,5 +1,24 @@
 import Foundation
 
+public enum AccentColorPreference: String, Codable, Sendable, CaseIterable {
+    case localSend = "localsend"
+    case system = "system"
+
+    public var displayName: String {
+        switch self {
+        case .localSend: return "Original LocalSend"
+        case .system: return "Match System Accent"
+        }
+    }
+
+    public var subtitle: String {
+        switch self {
+        case .localSend: return "Signature LocalSend Teal palette (#009688 / #008080)"
+        case .system: return "Follows your device's System Settings accent colour"
+        }
+    }
+}
+
 /// Application settings persisted across app launches.
 public struct AppSettings: Codable, Sendable {
     public var alias: String
@@ -11,6 +30,7 @@ public struct AppSettings: Codable, Sendable {
     public var destinationDirectoryPath: String
     public var protocolType: ProtocolType
     public var saveToHistory: Bool
+    public var accentColorPreference: AccentColorPreference
 
     public static var defaultDestinationDirectory: URL {
         #if os(macOS)
@@ -52,7 +72,8 @@ public struct AppSettings: Codable, Sendable {
         autoAccept: Bool = false,
         destinationDirectoryPath: String = defaultDestinationDirectory.path,
         protocolType: ProtocolType = .http,
-        saveToHistory: Bool = true
+        saveToHistory: Bool = true,
+        accentColorPreference: AccentColorPreference = .localSend
     ) {
         self.alias = alias
         self.deviceType = deviceType
@@ -63,10 +84,31 @@ public struct AppSettings: Codable, Sendable {
         self.destinationDirectoryPath = destinationDirectoryPath
         self.protocolType = protocolType
         self.saveToHistory = saveToHistory
+        self.accentColorPreference = accentColorPreference
     }
 
     public var destinationURL: URL {
         URL(fileURLWithPath: destinationDirectoryPath)
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case alias, deviceType, port, multicastGroup, multicastPort
+        case autoAccept, destinationDirectoryPath, protocolType, saveToHistory
+        case accentColorPreference
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        alias = try container.decodeIfPresent(String.self, forKey: .alias) ?? Self.defaultAlias
+        deviceType = try container.decodeIfPresent(DeviceType.self, forKey: .deviceType) ?? Self.defaultDeviceType
+        port = try container.decodeIfPresent(Int.self, forKey: .port) ?? 53317
+        multicastGroup = try container.decodeIfPresent(String.self, forKey: .multicastGroup) ?? "224.0.0.167"
+        multicastPort = try container.decodeIfPresent(Int.self, forKey: .multicastPort) ?? 53317
+        autoAccept = try container.decodeIfPresent(Bool.self, forKey: .autoAccept) ?? false
+        destinationDirectoryPath = try container.decodeIfPresent(String.self, forKey: .destinationDirectoryPath) ?? Self.defaultDestinationDirectory.path
+        protocolType = try container.decodeIfPresent(ProtocolType.self, forKey: .protocolType) ?? .http
+        saveToHistory = try container.decodeIfPresent(Bool.self, forKey: .saveToHistory) ?? true
+        accentColorPreference = try container.decodeIfPresent(AccentColorPreference.self, forKey: .accentColorPreference) ?? .localSend
     }
 
     private static let userDefaultsKey = "localsend_app_settings"

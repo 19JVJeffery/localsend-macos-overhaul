@@ -86,10 +86,31 @@ public final class LocalSendEngine: ObservableObject {
 
     public func addStagedFiles(urls: [URL]) {
         for url in urls {
-            // Avoid adding duplicates
-            if !stagedFiles.contains(where: { $0.url.path == url.path }) {
-                stagedFiles.append(StagedFile(url: url))
+            var isDir: ObjCBool = false
+            if FileManager.default.fileExists(atPath: url.path, isDirectory: &isDir), isDir.boolValue {
+                // Recursively add directory contents
+                if let enumerator = FileManager.default.enumerator(at: url, includingPropertiesForKeys: [.isRegularFileKey], options: [.skipsHiddenFiles]) {
+                    for case let fileURL as URL in enumerator {
+                        let res = try? fileURL.resourceValues(forKeys: [.isRegularFileKey])
+                        if res?.isRegularFile == true && !stagedFiles.contains(where: { $0.url.path == fileURL.path }) {
+                            stagedFiles.append(StagedFile(url: fileURL))
+                        }
+                    }
+                }
+            } else {
+                if !stagedFiles.contains(where: { $0.url.path == url.path }) {
+                    stagedFiles.append(StagedFile(url: url))
+                }
             }
+        }
+    }
+
+    public func stageTextMessage(_ text: String) {
+        let tempDir = FileManager.default.temporaryDirectory
+        let fileURL = tempDir.appendingPathComponent("message-\(UUID().uuidString.prefix(6)).txt")
+        if let data = text.data(using: .utf8) {
+            try? data.write(to: fileURL)
+            stagedFiles.append(StagedFile(url: fileURL))
         }
     }
 
@@ -99,6 +120,18 @@ public final class LocalSendEngine: ObservableObject {
 
     public func clearStagedFiles() {
         stagedFiles.removeAll()
+    }
+
+    public func sendStagedFiles(toIP ip: String, port: Int) {
+        let manualDevice = Device(
+            alias: "Device (\(ip))",
+            deviceType: .desktop,
+            fingerprint: "",
+            ip: ip,
+            port: port,
+            protocol: .http
+        )
+        sendStagedFiles(to: manualDevice)
     }
 
     // MARK: - Outgoing Transfers

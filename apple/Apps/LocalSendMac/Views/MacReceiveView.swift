@@ -5,9 +5,14 @@ import LocalSendUI
 
 public struct MacReceiveView: View {
     @ObservedObject var engine: LocalSendEngine
+    @Environment(\.colorScheme) private var colorScheme
 
     public init(engine: LocalSendEngine) {
         self.engine = engine
+    }
+
+    private var accentColor: Color {
+        LocalSendTheme.accent(for: engine.settings.accentColorPreference, colorScheme: colorScheme)
     }
 
     public var body: some View {
@@ -18,11 +23,20 @@ public struct MacReceiveView: View {
                 let incomingTransfers = engine.activeTransfers.filter { $0.direction == .receiving }
                 if !incomingTransfers.isEmpty {
                     VStack(alignment: .leading, spacing: LocalSendTheme.spacingSmall) {
-                        Text("Incoming Transfers")
-                            .font(.title3.weight(.bold))
+                        HStack {
+                            Text("Incoming Transfers")
+                                .font(.title3.weight(.bold))
+
+                            Spacer()
+
+                            MorphingStatusPill(
+                                status: .transferring(progress: incomingTransfers.first?.progress ?? 0),
+                                accentColor: LocalSendTheme.success
+                            )
+                        }
 
                         ForEach(incomingTransfers) { session in
-                            TransferProgressCard(session: session) {
+                            TransferProgressCard(session: session, accentColor: LocalSendTheme.success) {
                                 engine.cancelTransfer(id: session.id)
                             }
                         }
@@ -30,39 +44,50 @@ public struct MacReceiveView: View {
                     Divider()
                 }
 
-                // Device Identity Banner
+                // Device Identity Beacon Card
                 VStack(alignment: .leading, spacing: LocalSendTheme.spacingMedium) {
-                    HStack(spacing: LocalSendTheme.spacingMedium) {
-                        ZStack {
-                            Circle()
-                                .fill(Color.green.opacity(0.15))
-                                .frame(width: 56, height: 56)
+                    HStack(spacing: LocalSendTheme.spacingLarge) {
+                        RadarScanningView(isScanning: true, accentColor: accentColor)
+                            .frame(width: 120, height: 120)
 
-                            Image(systemName: "antenna.radiowaves.left.and.right")
-                                .font(.system(size: 26))
-                                .foregroundColor(.green)
-                        }
-
-                        VStack(alignment: .leading, spacing: 4) {
-                            HStack {
+                        VStack(alignment: .leading, spacing: 6) {
+                            HStack(spacing: 8) {
                                 Text(engine.settings.alias)
                                     .font(.title2.weight(.bold))
 
                                 Circle()
-                                    .fill(Color.green)
+                                    .fill(LocalSendTheme.success)
                                     .frame(width: 8, height: 8)
+
+                                Text("Online")
+                                    .font(.caption.weight(.semibold))
+                                    .foregroundColor(LocalSendTheme.success)
                             }
 
-                            Text("Visible to nearby devices on the local network")
+                            Text("Visible to nearby devices on the local Wi-Fi and Ethernet network")
                                 .font(.subheadline)
                                 .foregroundColor(.secondary)
+
+                            HStack(spacing: 12) {
+                                Label("Port \(engine.settings.port)", systemImage: "network")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+
+                                Label(engine.settings.deviceType.displayName, systemImage: engine.settings.deviceType.systemImageName)
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
                         }
 
                         Spacer()
                     }
-                    .padding(LocalSendTheme.spacingMedium)
+                    .padding(LocalSendTheme.spacingLarge)
                     .background(LocalSendTheme.cardBackground)
-                    .clipShape(RoundedRectangle(cornerRadius: LocalSendTheme.cornerRadiusMedium, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: LocalSendTheme.cornerRadiusCard, style: .continuous))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: LocalSendTheme.cornerRadiusCard, style: .continuous)
+                            .stroke(LocalSendTheme.borderSubtle, lineWidth: 1)
+                    )
                 }
 
                 // Receive Settings Card
@@ -102,24 +127,29 @@ public struct MacReceiveView: View {
                             VStack(alignment: .leading, spacing: 2) {
                                 Text("Quick Save (Auto-Accept)")
                                     .font(.headline)
-                                Text("Automatically accept and save incoming file transfers from everyone")
+                                Text("Automatically save incoming files from anyone without asking for confirmation")
                                     .font(.caption)
                                     .foregroundColor(.secondary)
                             }
                         }
                         .toggleStyle(.switch)
+                        .tint(accentColor)
                         .onChange(of: engine.settings.autoAccept) { _ in
                             engine.settings.save()
                         }
                     }
-                    .padding(LocalSendTheme.spacingMedium)
+                    .padding(LocalSendTheme.spacingLarge)
                     .background(LocalSendTheme.cardBackground)
-                    .clipShape(RoundedRectangle(cornerRadius: LocalSendTheme.cornerRadiusMedium, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: LocalSendTheme.cornerRadiusCard, style: .continuous))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: LocalSendTheme.cornerRadiusCard, style: .continuous)
+                            .stroke(LocalSendTheme.borderSubtle, lineWidth: 1)
+                    )
                 }
 
                 // Network Interfaces Info
                 VStack(alignment: .leading, spacing: LocalSendTheme.spacingSmall) {
-                    Text("Network Information")
+                    Text("Local Network Interfaces")
                         .font(.headline)
 
                     let interfaces = NetworkAddressHelper.getLocalIPv4Addresses()
@@ -130,8 +160,8 @@ public struct MacReceiveView: View {
                     } else {
                         ForEach(interfaces, id: \.address) { iface in
                             HStack {
-                                Image(systemName: "network")
-                                    .foregroundColor(.secondary)
+                                Image(systemName: "wifi")
+                                    .foregroundColor(accentColor)
                                 Text(iface.name)
                                     .font(.subheadline.weight(.medium))
                                 Spacer()
@@ -143,9 +173,13 @@ public struct MacReceiveView: View {
                         }
                     }
                 }
-                .padding(LocalSendTheme.spacingMedium)
+                .padding(LocalSendTheme.spacingLarge)
                 .background(LocalSendTheme.cardBackground)
-                .clipShape(RoundedRectangle(cornerRadius: LocalSendTheme.cornerRadiusMedium, style: .continuous))
+                .clipShape(RoundedRectangle(cornerRadius: LocalSendTheme.cornerRadiusCard, style: .continuous))
+                .overlay(
+                    RoundedRectangle(cornerRadius: LocalSendTheme.cornerRadiusCard, style: .continuous)
+                        .stroke(LocalSendTheme.borderSubtle, lineWidth: 1)
+                )
             }
             .padding(LocalSendTheme.spacingLarge)
         }

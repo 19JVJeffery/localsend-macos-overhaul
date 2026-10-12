@@ -22,19 +22,30 @@ public enum PadTabItem: String, CaseIterable, Identifiable {
 
 public struct IOSPadSplitView: View {
     @ObservedObject var engine: LocalSendEngine
+    @Environment(\.colorScheme) private var colorScheme
     @State private var selectedTab: PadTabItem? = .send
 
     public init(engine: LocalSendEngine) {
         self.engine = engine
     }
 
+    private var accentColor: Color {
+        LocalSendTheme.accent(for: engine.settings.accentColorPreference, colorScheme: colorScheme)
+    }
+
     public var body: some View {
         NavigationSplitView {
             List(PadTabItem.allCases, selection: $selectedTab) { item in
                 NavigationLink(value: item) {
-                    Label(item.rawValue, systemImage: item.systemImage)
-                        .font(.headline)
-                        .padding(.vertical, 4)
+                    HStack {
+                        Label(item.rawValue, systemImage: item.systemImage)
+                            .font(.headline)
+                            .padding(.vertical, 4)
+
+                        Spacer()
+
+                        badgeView(for: item)
+                    }
                 }
             }
             .listStyle(.sidebar)
@@ -52,6 +63,42 @@ public struct IOSPadSplitView: View {
             case .none:
                 IOSSendView(engine: engine)
             }
+        }
+        .tint(accentColor)
+    }
+
+    @ViewBuilder
+    private func badgeView(for item: PadTabItem) -> some View {
+        switch item {
+        case .send:
+            if !engine.stagedFiles.isEmpty {
+                Text("\(engine.stagedFiles.count)")
+                    .font(.caption2.weight(.bold))
+                    .padding(.horizontal, 6)
+                    .padding(.vertical, 2)
+                    .background(accentColor.opacity(0.18))
+                    .foregroundColor(accentColor)
+                    .clipShape(Capsule())
+            }
+        case .receive:
+            let incoming = engine.activeTransfers.filter { $0.direction == .receiving }.count
+            if incoming > 0 {
+                Text("\(incoming)")
+                    .font(.caption2.weight(.bold))
+                    .padding(.horizontal, 6)
+                    .padding(.vertical, 2)
+                    .background(LocalSendTheme.success.opacity(0.18))
+                    .foregroundColor(LocalSendTheme.success)
+                    .clipShape(Capsule())
+            }
+        case .history:
+            if !engine.transferHistory.isEmpty {
+                Text("\(engine.transferHistory.count)")
+                    .font(.caption2)
+                    .foregroundColor(.secondary)
+            }
+        case .settings:
+            EmptyView()
         }
     }
 }
