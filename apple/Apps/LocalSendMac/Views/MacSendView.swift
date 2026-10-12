@@ -185,9 +185,11 @@ public struct MacSendView: View {
                                     selectedDevice = device
                                     if !engine.stagedFiles.isEmpty {
                                         engine.sendStagedFiles(to: device)
+                                    } else {
+                                        isFileImporterPresented = true
                                     }
                                 }
-                                .help(engine.stagedFiles.isEmpty ? "Select files first to send to \(device.alias)" : "Click to send files to \(device.alias)")
+                                .help(engine.stagedFiles.isEmpty ? "Click to pick files and send to \(device.alias)" : "Click to send files to \(device.alias)")
                                 .transition(.scale.combined(with: .opacity))
                             }
                         }
@@ -227,9 +229,15 @@ public struct MacSendView: View {
     private var dropTargetEmptyView: some View {
         Button(action: { isFileImporterPresented = true }) {
             VStack(spacing: LocalSendTheme.spacingSmall) {
-                Image(systemName: "arrow.down.doc")
-                    .font(.system(size: 38, weight: .light))
-                    .foregroundColor(isTargetedForDrop ? accentColor : .secondary)
+                ZStack {
+                    Circle()
+                        .fill(accentColor.opacity(isTargetedForDrop ? 0.25 : 0.12))
+                        .frame(width: 64, height: 64)
+
+                    Image(systemName: "arrow.down.doc.fill")
+                        .font(.system(size: 28, weight: .regular))
+                        .foregroundColor(accentColor)
+                }
 
                 Text("Drop files here or click to browse")
                     .font(.headline)

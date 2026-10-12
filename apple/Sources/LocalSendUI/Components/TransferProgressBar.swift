@@ -1,7 +1,8 @@
 import SwiftUI
 import LocalSendCore
 
-/// Card view representing an in-flight or completed transfer session with animated progress bar and controls.
+/// Card view representing an in-flight or completed transfer session with animated progress bar,
+/// dynamic data stream pulses, and refined status indicators.
 public struct TransferProgressCard: View {
     public let session: TransferSession
     public let accentColor: Color
@@ -18,22 +19,30 @@ public struct TransferProgressCard: View {
     }
 
     public var body: some View {
+        let activeColor = session.direction == .sending ? accentColor : LocalSendTheme.success
+
         VStack(alignment: .leading, spacing: LocalSendTheme.spacingSmall) {
             // Header: Direction + Device + File count
-            HStack {
+            HStack(spacing: LocalSendTheme.spacingSmall) {
                 ZStack {
                     Circle()
-                        .fill(session.direction == .sending ? accentColor.opacity(0.15) : LocalSendTheme.success.opacity(0.15))
-                        .frame(width: 36, height: 36)
+                        .fill(activeColor.opacity(0.15))
+                        .frame(width: 38, height: 38)
 
                     Image(systemName: session.direction == .sending ? "arrow.up.circle.fill" : "arrow.down.circle.fill")
-                        .foregroundColor(session.direction == .sending ? accentColor : LocalSendTheme.success)
-                        .font(.system(size: 20))
+                        .foregroundColor(activeColor)
+                        .font(.system(size: 22))
                 }
 
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(session.direction == .sending ? "Sending to \(session.remoteDevice.alias)" : "Receiving from \(session.remoteDevice.alias)")
-                        .font(.headline)
+                    HStack(spacing: 6) {
+                        Text(session.direction == .sending ? "Sending to \(session.remoteDevice.alias)" : "Receiving from \(session.remoteDevice.alias)")
+                            .font(.headline)
+
+                        if !session.status.isTerminal {
+                            TransferFlowView(isTransferring: true, accentColor: activeColor, particleCount: 4)
+                        }
+                    }
 
                     Text("\(session.files.count) file\(session.files.count == 1 ? "" : "s") • \(LocalSendFormatters.formatFileSize(session.totalSize))")
                         .font(.caption)
@@ -59,14 +68,22 @@ public struct TransferProgressCard: View {
             if !session.status.isTerminal {
                 ModernProgressBar(
                     progress: session.progress,
-                    accentColor: session.direction == .sending ? accentColor : LocalSendTheme.success,
+                    accentColor: activeColor,
                     height: 8
                 )
 
                 HStack {
-                    Text("\(Int(session.progress * 100))%")
-                        .font(.system(.caption, design: .monospaced).weight(.semibold))
-                        .foregroundColor(.secondary)
+                    HStack(spacing: 4) {
+                        Text("\(Int(session.progress * 100))%")
+                            .font(.system(.caption, design: .monospaced).weight(.bold))
+                            .foregroundColor(.primary)
+
+                        if session.status == .inProgress {
+                            Text("• Transferring")
+                                .font(.caption2)
+                                .foregroundColor(activeColor)
+                        }
+                    }
 
                     Spacer()
 
@@ -78,9 +95,14 @@ public struct TransferProgressCard: View {
 
             // Error message if failed
             if let error = session.errorMessage {
-                Text(error)
-                    .font(.caption)
-                    .foregroundColor(LocalSendTheme.error)
+                HStack(spacing: 6) {
+                    Image(systemName: "exclamationmark.triangle.fill")
+                        .font(.caption)
+                    Text(error)
+                        .font(.caption)
+                }
+                .foregroundColor(LocalSendTheme.error)
+                .padding(.top, 2)
             }
         }
         .padding(LocalSendTheme.spacingMedium)
@@ -88,7 +110,12 @@ public struct TransferProgressCard: View {
         .clipShape(RoundedRectangle(cornerRadius: LocalSendTheme.cornerRadiusCard, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: LocalSendTheme.cornerRadiusCard, style: .continuous)
-                .stroke(LocalSendTheme.borderSubtle, lineWidth: 1)
+                .stroke(
+                    !session.status.isTerminal
+                        ? activeColor.opacity(0.25)
+                        : LocalSendTheme.borderSubtle,
+                    lineWidth: 1
+                )
         )
         .localSendShadow(LocalSendTheme.shadowSubtle)
         .animation(LocalSendMotion.standard, value: session.progress)

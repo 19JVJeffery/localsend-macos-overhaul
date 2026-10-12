@@ -1,7 +1,7 @@
 import SwiftUI
 import LocalSendCore
 
-/// Displays a single file staged to be sent, with category-colored icon and smooth remove action.
+/// Displays a single file staged to be sent, with category-colored icon, specular borders, and smooth remove action.
 public struct StagedFileItemView: View {
     public let file: StagedFile
     public let onRemove: () -> Void
@@ -17,19 +17,29 @@ public struct StagedFileItemView: View {
         let typeColor = LocalSendTheme.fileTypeColor(for: file.fileExtension)
 
         HStack(spacing: LocalSendTheme.spacingMedium) {
-            // File Icon with category-tinted background
+            // File Icon with category-tinted gradient background
             ZStack {
                 RoundedRectangle(cornerRadius: LocalSendTheme.cornerRadiusSmall, style: .continuous)
-                    .fill(typeColor.opacity(0.14))
-                    .frame(width: 42, height: 42)
+                    .fill(
+                        LinearGradient(
+                            colors: [typeColor.opacity(0.18), typeColor.opacity(0.08)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                    .frame(width: 44, height: 44)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: LocalSendTheme.cornerRadiusSmall, style: .continuous)
+                            .stroke(typeColor.opacity(0.25), lineWidth: 1)
+                    )
 
                 Image(systemName: iconName(for: file.fileExtension))
-                    .font(.system(size: 20, weight: .medium))
+                    .font(.system(size: 21, weight: .medium))
                     .foregroundColor(typeColor)
             }
 
             // Name and Size
-            VStack(alignment: .leading, spacing: 2) {
+            VStack(alignment: .leading, spacing: 3) {
                 Text(file.name)
                     .font(.body.weight(.medium))
                     .foregroundColor(.primary)
@@ -43,15 +53,15 @@ public struct StagedFileItemView: View {
 
                     Text("•")
                         .font(.caption)
-                        .foregroundColor(.secondary.opacity(0.6))
+                        .foregroundColor(.secondary.opacity(0.5))
 
                     Text(file.fileExtension.uppercased())
                         .font(.system(size: 10, weight: .bold, design: .rounded))
                         .foregroundColor(typeColor)
-                        .padding(.horizontal, 4)
-                        .padding(.vertical, 1)
+                        .padding(.horizontal, 5)
+                        .padding(.vertical, 1.5)
                         .background(typeColor.opacity(0.12))
-                        .clipShape(RoundedRectangle(cornerRadius: 3))
+                        .clipShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
                 }
             }
 
@@ -59,9 +69,15 @@ public struct StagedFileItemView: View {
 
             // Remove Button
             Button(action: onRemove) {
-                Image(systemName: "xmark.circle.fill")
-                    .foregroundColor(isHovered ? .red.opacity(0.85) : .secondary)
-                    .font(.system(size: 18))
+                ZStack {
+                    Circle()
+                        .fill(isHovered ? Color.red.opacity(0.12) : Color.clear)
+                        .frame(width: 28, height: 28)
+
+                    Image(systemName: "xmark.circle.fill")
+                        .foregroundColor(isHovered ? .red : .secondary.opacity(0.7))
+                        .font(.system(size: 19))
+                }
             }
             .buttonStyle(.plain)
             .help("Remove file")
@@ -72,8 +88,16 @@ public struct StagedFileItemView: View {
         .clipShape(RoundedRectangle(cornerRadius: LocalSendTheme.cornerRadiusMedium, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: LocalSendTheme.cornerRadiusMedium, style: .continuous)
-                .stroke(isHovered ? typeColor.opacity(0.35) : LocalSendTheme.borderSubtle, lineWidth: 1)
+                .stroke(
+                    isHovered
+                        ? typeColor.opacity(0.4)
+                        : LocalSendTheme.borderSubtle,
+                    lineWidth: 1
+                )
         )
+        .scaleEffect(isHovered ? 1.015 : 1.0)
+        .localSendShadow(isHovered ? LocalSendTheme.shadowMedium : LocalSendTheme.shadowSubtle)
+        .animation(LocalSendMotion.snappy, value: isHovered)
         .onHover { hovering in
             isHovered = hovering
         }

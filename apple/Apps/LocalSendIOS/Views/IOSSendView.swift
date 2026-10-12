@@ -149,6 +149,8 @@ public struct IOSSendView: View {
                                     DeviceCard(device: device, accentColor: accentColor) {
                                         if !engine.stagedFiles.isEmpty {
                                             engine.sendStagedFiles(to: device)
+                                        } else {
+                                            isFileImporterPresented = true
                                         }
                                     }
                                 }

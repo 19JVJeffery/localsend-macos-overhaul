@@ -1,46 +1,78 @@
 import SwiftUI
 
-/// Animated data stream communicating active file transfer.
+/// Animated fluid data stream communicating active file transfer with traveling kinetic energy pulses.
 public struct TransferFlowView: View {
     public let isTransferring: Bool
     public let accentColor: Color
+    public let particleCount: Int
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
-    @State private var phase: CGFloat = 0
+    @State private var phase: CGFloat = 0.0
 
-    public init(isTransferring: Bool = true, accentColor: Color = LocalSendTheme.accent()) {
+    public init(
+        isTransferring: Bool = true,
+        accentColor: Color = LocalSendTheme.accent(),
+        particleCount: Int = 6
+    ) {
         self.isTransferring = isTransferring
         self.accentColor = accentColor
+        self.particleCount = max(3, particleCount)
     }
 
     public var body: some View {
-        HStack(spacing: 6) {
-            ForEach(0..<5) { index in
-                Circle()
-                    .fill(accentColor)
-                    .frame(width: 5, height: 5)
-                    .opacity(particleOpacity(for: index))
-                    .scaleEffect(particleScale(for: index))
-            }
-        }
-        .onAppear {
-            if isTransferring && !reduceMotion {
-                withAnimation(.linear(duration: 1.2).repeatForever(autoreverses: false)) {
-                    phase = 1.0
+        HStack(spacing: 5) {
+            ForEach(0..<particleCount, id: \.self) { index in
+                let progress = normalizedProgress(for: index)
+
+                ZStack {
+                    // Soft glow halo for active particle
+                    if !reduceMotion && isTransferring {
+                        Circle()
+                            .fill(accentColor.opacity(Double(progress) * 0.45))
+                            .frame(width: 8, height: 8)
+                            .blur(radius: 2)
+                    }
+
+                    // Core bead with gradient
+                    Capsule()
+                        .fill(
+                            LinearGradient(
+                                colors: [
+                                    accentColor,
+                                    accentColor.opacity(0.7)
+                                ],
+                                startPoint: .top,
+                                endPoint: .bottom
+                            )
+                        )
+                        .frame(
+                            width: max(3.0, 4.0 + CGFloat(progress) * 2.5),
+                            height: max(3.0, 4.0 + CGFloat(progress) * 2.5)
+                        )
+                        .opacity(reduceMotion ? 0.7 : (0.2 + Double(progress) * 0.8))
                 }
             }
         }
+        .onAppear {
+            startFlowIfNeeded()
+        }
+        .onChange(of: isTransferring) { transferring in
+            if transferring { startFlowIfNeeded() }
+        }
     }
 
-    private func particleOpacity(for index: Int) -> Double {
+    private func normalizedProgress(for index: Int) -> CGFloat {
         if reduceMotion { return 0.6 }
-        let offset = (CGFloat(index) / 5.0 + phase).truncatingRemainder(dividingBy: 1.0)
-        return Double(sin(offset * .pi)) * 0.8 + 0.2
+        let step = 1.0 / CGFloat(particleCount)
+        let raw = (CGFloat(index) * step + phase).truncatingRemainder(dividingBy: 1.0)
+        // Sine wave bell-curve for smooth fading at ends
+        return CGFloat(sin(raw * .pi))
     }
 
-    private func particleScale(for index: Int) -> CGFloat {
-        if reduceMotion { return 1.0 }
-        let offset = (CGFloat(index) / 5.0 + phase).truncatingRemainder(dividingBy: 1.0)
-        return 0.8 + CGFloat(sin(offset * .pi)) * 0.4
+    private func startFlowIfNeeded() {
+        guard isTransferring && !reduceMotion else { return }
+        withAnimation(.linear(duration: 1.1).repeatForever(autoreverses: false)) {
+            phase = 1.0
+        }
     }
 }
